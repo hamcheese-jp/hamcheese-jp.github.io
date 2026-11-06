@@ -152,10 +152,10 @@ textarea { min-height: 70px; resize: vertical; }
 <script>
 // ============================================================================
 // 作品のまとめページ。一覧は GAS（ポータル.js）から読む
-//   API：GAS の公開URL（おてんきプランターと同じ）。パソコンの確認用サーバーでは /portal-api
+//   API：まとめページ専用の GAS の公開URL。パソコンの確認用サーバーでは /portal-api
 // ============================================================================
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '/portal-api'
-  : 'https://script.google.com/macros/s/AKfycbwg3uCPrWvaBtUxxa9JE306ZZRChZBRXilaNGiwq1Ue-7H6CYaESioeJJhTiaYyn6N6jg/exec';
+  : 'https://script.google.com/macros/s/AKfycbyxp1bGOGkzylwYM7Zwd9NS0U9W_OWvCkGL0ZzGxSKAhx8a20NgFvGe0qSLfSgX6jqQsw/exec';
 
 const KINDS = {
   game:    { tab: '🎮 ゲーム',   head: '🎮 ゲーム',        ph: '🎮' },
