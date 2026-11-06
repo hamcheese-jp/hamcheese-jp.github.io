@@ -276,6 +276,10 @@ h1.logo-h { margin: 0; line-height: 0; }
 .subm .row { margin-top: 10px; }
 .subm .row button { padding: 9px 6px; font-size: 13px; }
 .subm .ok-btn { background: var(--green); color: #fff; }
+.subm .dest { font-size: 15px; color: var(--ink); background: var(--bg2); padding: 0 6px; border-radius: 6px; }
+.subm > .btn { width: 100%; margin-bottom: 8px; }
+.verify { margin-top: 10px; padding: 10px; border-radius: 10px; background: var(--bg); }
+.verify .check { margin: 0; font-weight: bold; }
 
 /* 管理者のバー：スマホでははみ出さないように横にすべらせる */
 .abar { overflow-x: auto; scrollbar-width: none; }
@@ -552,7 +556,9 @@ function card(it) {
   ]);
   if (it.kind === 'video' && tiktokId(it)) { thumb.dataset.vid = tiktokId(it); LIVE.observe(thumb); }
   const date = it.kind === 'note' && it.added ? new Date(it.added).toLocaleDateString('ja-JP') : '';
-  const c = el('a', { class: 'card', href: it.url, target: '_blank', rel: it.pr ? 'noopener sponsored' : 'noopener' }, [
+  // みんなのゲームは「ほかの人のリンク」（ugc・nofollow：検索の順位かせぎのための申請が意味をなさないように）
+  const rel = it.pr ? 'noopener sponsored' : it.kind === 'community' ? 'noopener ugc nofollow' : 'noopener';
+  const c = el('a', { class: 'card', href: it.url, target: '_blank', rel }, [
     it.pr ? el('span', { class: 'badge', text: 'PR' })
       : (DATA.popular || []).includes(it.id) ? el('span', { class: 'badge hot', text: '🔥 人気' })
       : isNew ? el('span', { class: 'badge new', text: 'NEW' }) : null,
@@ -577,7 +583,7 @@ function authorLink(it) {
   const open = e => {
     e.preventDefault(); e.stopPropagation();
     track('link', { id: 'author:' + it.id, title: it.author + '（作者のSNS）', kind: 'community' });
-    window.open(url, '_blank', 'noopener');
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
   return el('span', { class: 'author', role: 'link', tabindex: '0', title: url, text: '作：' + it.author + ' ↗', onclick: open,
     onkeydown: e => { if (e.key === 'Enter') open(e); } });
@@ -811,13 +817,25 @@ function imagePicker(initial, opt) {
     get: () => value,
     setShape: s => { shape = s; show(); },
     // 「読みこむ」で見つけた画像の住所 → サーバーで画像を取ってきて、写真と同じように小さくする
-    async fromUrl(u) {
+    //   strict：取りこめなかったときに URL のまま残さない（みんなのゲーム：あとから画像をすりかえられないように）
+    async fromUrl(u, strict) {
       if (!safeUrl(u)) return;
-      try { await take(await call('portalFetchImage', CODE, u)); if (!value) value = u; }
-      catch (e) { value = u; err.textContent = ''; }
+      try { await take(await call('portalFetchImage', CODE, u)); if (!value && !strict) value = u; }
+      catch (e) {
+        if (strict) { value = ''; show(); err.textContent = '画像を取りこめませんでした。「写真から選ぶ」で選びなおすか、画像なしで載せてください'; return; }
+        value = u; err.textContent = '';
+      }
       show();
     }
   };
+}
+
+// 外の画像（http…）を、サーバーで取ってきて小さくし、こちらに保存する形（data:…）にする。
+// みんなのゲームは許可するときにこれを通す（相手が画像をあとから変えても、ページの画像は変わらない）
+async function storeImage(v) {
+  if (!v || /^data:image\//.test(v)) return v || '';
+  if (!safeUrl(v)) return '';
+  return shrinkImage(await call('portalFetchImage', CODE, v), { max: 640, limit: 45000 });
 }
 $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
 
@@ -842,6 +860,7 @@ function openSubmit() {
       contact: el('input', { type: 'text', maxlength: '120', placeholder: 'メールアドレスなど（なくてもOK）', autocomplete: 'off' }),
       // ロボットよけ：人には見えない欄。ここに何か入っていたら、ロボットとみなす
       website: el('input', { type: 'text', name: 'website', tabindex: '-1', autocomplete: 'off', 'aria-hidden': 'true' }),
+      owner: el('input', { type: 'checkbox' }),
       agree: el('input', { type: 'checkbox' })
     };
     const pick = imagePicker('');
@@ -855,6 +874,7 @@ function openSubmit() {
       if (!f.author.value.trim()) return (err.textContent = '作者名を入れてください');
       if (f.authorUrl.value.trim() && !http(f.authorUrl.value)) return (err.textContent = '作者のSNSのURLは http:// か https:// で始まるものを入れてください');
       if (f.imageUrl.value.trim() && !http(f.imageUrl.value)) return (err.textContent = '画像のURLは http:// か https:// で始まるものを入れてください');
+      if (!f.owner.checked) return (err.textContent = '申請できるのは、ゲームを作った本人（または作ったチームの人）だけです');
       if (!f.agree.checked) return (err.textContent = '「載せるときの決まり」を読んで、チェックを入れてください');
       if (subCountToday().length >= SUB_LIMIT) return (err.textContent = '1台から申請できるのは1日' + SUB_LIMIT + '件までです。また明日おねがいします');
       // 開いてすぐ（2秒以内）の送信はロボットとみなして、受けつけたふりをする
@@ -863,7 +883,7 @@ function openSubmit() {
       try {
         if (!bot) await call('portalSubmit', VID, {
           title: f.title.value, url: f.url.value.trim(), desc: f.desc.value, image: pick.get() || f.imageUrl.value.trim(),
-          author: f.author.value, authorUrl: f.authorUrl.value.trim(), contact: f.contact.value, agree: true, website: f.website.value
+          author: f.author.value, authorUrl: f.authorUrl.value.trim(), contact: f.contact.value, owner: true, agree: true, website: f.website.value
         });
         try { localStorage.setItem('portal_subs', JSON.stringify(subCountToday().concat(Date.now()))); } catch (e) {}
         box.innerHTML = '';
@@ -886,7 +906,9 @@ function openSubmit() {
       el('label', { text: '作者のSNSのURL（ページに出ます・なくてもOK）' }), f.authorUrl,
       el('label', { text: '連絡先（管理者だけが見ます・ページには出しません）' }), f.contact,
       el('div', { class: 'hp' }, [el('label', { text: 'ここは空のままにしてください' }), f.website]),
-      el('label', { class: 'check', style: 'margin-top:14px' }, [f.agree, el('span', {}, [
+      el('label', { class: 'check', style: 'margin-top:14px' }, [f.owner, 'このゲームを作った本人（または作ったチームの人）です']),
+      el('p', { class: 'hint', text: 'ほかの人のゲームは申請できません。作者のSNSに、このゲームのことを書いておくと早く確かめられます。' }),
+      el('label', { class: 'check', style: 'margin-top:10px' }, [f.agree, el('span', {}, [
         el('button', { class: 'linkish', text: '載せるときの決まり', onclick: e => { e.preventDefault(); openRules(true); } }), ' を読んで、同意します'
       ])]),
       err,
@@ -901,7 +923,8 @@ function openRules(fromForm) {
   const html = el('div', { class: 'rules' }, [
     el('p', { class: 'hint', text: '「🕹️ みんなのゲーム」は、ゲームを作った人が自分の作品を紹介できる場所です。見る人が安心して遊べるように、次の決まりがあります。' }),
     el('h4', { text: '🙆 載せられるもの' }),
-    el('ul', {}, ['自分（または自分たち）が作ったゲーム', 'ブラウザで遊べるページや、ストアのページなど、だれでも開けるURL', 'だれでも安心して遊べる内容のもの'].map(t => el('li', { text: t }))),
+    el('ul', {}, ['自分（または自分たち）が作ったゲーム。申請できるのは作者本人（または作ったチームの人）だけです',
+      'ブラウザで遊べるページや、ストアのページなど、だれでも開けるURL（bit.ly などの短くしたURLは使えません）', 'だれでも安心して遊べる内容のもの'].map(t => el('li', { text: t }))),
     el('h4', { text: '🙅 載せられないもの' }),
     el('ul', {}, [
       'だましのページ（ログインやお金の情報を入れさせる、うそのボタンで別のページへ飛ばす など）',
@@ -915,6 +938,10 @@ function openRules(fromForm) {
     el('h4', { text: '📮 申請について' }),
     el('ul', {}, [
       '申請しても、すぐには載りません。管理者が中身を確かめてから載せます。',
+      '作者本人の申請かどうかを、作者のSNSなどで確かめます。確かめられないときは、作者のSNSでお聞きするか、見送ることがあります。',
+      'ほかの人の作品を、自分の作品のように申請するのはやめてください。わかったときは消します。',
+      '画像は、載せるときにこのページの中に取りこみます（あとから元の画像を変えても、ページの画像は変わりません）。',
+      'ゲームの中身があとから変わって決まりに合わなくなったときも、消すことがあります。',
       '載せるかどうかは管理者が決めます。理由をお知らせしないで見送ることがあります。',
       '載せたあとでも、決まりに合わないとわかったときや、作者さんから頼まれたときは消すことがあります。',
       '題名・説明・画像は、見やすいように管理者が直すことがあります。',
@@ -1015,37 +1042,71 @@ function subCard(s, redraw) {
   const st = SUB_STATE[s.state] || 'wait';
   const kv = (k, v) => el('p', { class: 'kv' }, [el('span', { text: k + '：' }), v]);
   const link = u => safeUrl(u) ? el('a', { href: u, target: '_blank', rel: 'noopener noreferrer', text: u }) : '（なし）';
-  const img = safeImg(s.image);
+  // 本当の行き先（にせものの住所に気づけるように、ドメインを大きく出す）
+  const dest = u => safeUrl(u) ? el('b', { class: 'dest', text: host(u) || '？' }) : '（なし）';
   const err = el('div', { class: 'err' });
+  // 画像：写真（data:）はそのまま出す。外の画像（http…）は押したときだけ出す（開いただけで相手にこちらの情報が伝わらないように）
+  let pic = null;
+  if (/^data:image\//.test(s.image || '')) pic = el('img', { src: safeImg(s.image), alt: '' });
+  else if (safeUrl(s.image)) {
+    pic = el('button', { class: 'btn', text: '🖼️ 画像を見る（外のサイトの画像）', onclick: () => {
+      pic.replaceWith(el('img', { src: s.image, alt: '', referrerpolicy: 'no-referrer' }));
+    } });
+  }
   const c = el('div', { class: 'subm ' + st }, [
-    img ? el('img', { src: img, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer' }) : null,
+    pic,
     el('h4', { text: s.title }),
     el('p', { class: 'kv' }, [el('span', { class: 'st ' + st, text: s.state }), ' ' + new Date(s.at).toLocaleString('ja-JP')]),
+    kv('ゲームの行き先', dest(s.url)),
     kv('URL', link(s.url)),
     s.desc ? kv('説明', s.desc) : null,
     kv('作者', s.author),
-    kv('作者のSNS', link(s.authorUrl)),
+    kv('作者のSNS', s.authorUrl ? el('span', {}, [dest(s.authorUrl), ' ', link(s.authorUrl)]) : '（なし）'),
     kv('連絡先（ページには出しません）', s.contact || '（なし）'),
     s.memo ? kv('メモ', s.memo) : null,
     err
   ]);
+  let lock = () => {}; // 本人の確認のチェックで、許可のボタンを押せるようにする（下で決める）
   const done = async (p, msg) => {
     c.querySelectorAll('button').forEach(b => { b.disabled = true; });
     err.textContent = '';
     try { await p(); SUBS = await call('portalSubmissions', CODE); updateSubDot(); toast(msg); redraw(); if (msg !== '見送りました') load(true); }
-    catch (e) { err.textContent = e.message; c.querySelectorAll('button').forEach(b => { b.disabled = false; }); }
+    catch (e) { err.textContent = e.message; c.querySelectorAll('button').forEach(b => { b.disabled = false; }); lock(); }
   };
   if (st !== 'ok') {
-    c.appendChild(el('div', { class: 'row' }, [
-      el('button', { class: 'ok-btn', text: '✅ 許可', onclick: () => {
-        if (confirm('「' + s.title + '」を「みんなのゲーム」に載せますか？')) done(() => call('portalApprove', CODE, s.id), '載せました');
-      } }),
-      el('button', { text: '✏️ 直して許可', onclick: () => openEditor(null, s) }),
-      st === 'wait' ? el('button', { text: '❌ 見送り', onclick: () => {
-        const memo = prompt('見送る理由のメモ（管理者だけが見ます。なくてもOK）', '');
-        if (memo !== null) done(() => call('portalReject', CODE, s.id, memo), '見送りました');
-      } }) : null
-    ]));
+    // 本人の確認：これにチェックしないと許可できない
+    const ok = el('input', { type: 'checkbox' });
+    const okBtn = el('button', { class: 'ok-btn', text: '✅ 許可', onclick: () => {
+      if (!confirm('「' + s.title + '」を「みんなのゲーム」に載せますか？')) return;
+      done(async () => {
+        let image = s.image || '';
+        if (image && !/^data:image\//.test(image)) {
+          try { image = await storeImage(image); }
+          catch (e) {
+            if (!confirm('画像を取りこめませんでした。画像なしで載せますか？（あとで ✏️ から写真を入れられます）')) throw new Error('やめました');
+            image = '';
+          }
+        }
+        return call('portalApprove', CODE, s.id, { checked: true, edits: image !== (s.image || '') ? { image } : null });
+      }, '載せました');
+    } });
+    const editBtn = el('button', { text: '✏️ 直して許可', onclick: () => openEditor(null, s) });
+    lock = () => { okBtn.disabled = editBtn.disabled = !ok.checked; };
+    ok.addEventListener('change', lock);
+    lock();
+    c.append(
+      el('div', { class: 'verify' }, [
+        el('label', { class: 'check' }, [ok, '作者本人の申請だと確かめました']),
+        el('p', { class: 'hint', text: '作者のSNSに、このゲームのことが書いてあるか（またはゲームのページに作者のSNSがあるか）を見てください。わからないときは、作者のSNSで本人に聞いてから許可してください。URL を開くときは、ふだんサインインしていない別のウィンドウ（シークレットウィンドウ）がおすすめです。' })
+      ]),
+      el('div', { class: 'row' }, [
+        okBtn, editBtn,
+        st === 'wait' ? el('button', { text: '❌ 見送り', onclick: () => {
+          const memo = prompt('見送る理由のメモ（管理者だけが見ます。なくてもOK）', '');
+          if (memo !== null) done(() => call('portalReject', CODE, s.id, memo), '見送りました');
+        } }) : null
+      ])
+    );
   }
   return c;
 }
@@ -1096,7 +1157,9 @@ function openEditor(it, sub) {
     f.kind.value = it ? it.kind : 'game';
     if (sub) f.kind.disabled = true;
     f.pr.checked = it ? !!it.pr : false;
-    const pick = imagePicker(it ? it.image : '');
+    // 申請の画像が外の画像（http…）なら、ここでは出さずにサーバーで取りこむ（取りこめなければ画像なし）
+    const pick = imagePicker(sub && !/^data:image\//.test(it.image || '') ? '' : it ? it.image : '');
+    if (sub && safeUrl(it.image)) pick.fromUrl(it.image, true);
     const shapeOf = k => k === 'video' ? 'r34' : k === 'support' ? 'r11' : 'wide';
     pick.setShape(shapeOf(f.kind.value));
     const authorBox = el('div', {}, [
@@ -1117,7 +1180,7 @@ function openEditor(it, sub) {
         if (p.title) f.title.value = p.title;
         if (p.desc) f.desc.value = p.desc;
         pick.setShape(shapeOf(f.kind.value));
-        if (p.image && !pick.get()) await pick.fromUrl(p.image);
+        if (p.image && !pick.get()) await pick.fromUrl(p.image, f.kind.value === 'community');
         if (p.note || !p.title) err.textContent = p.note || '題名が読めなかったので、手で入れてください';
       } catch (e) { err.textContent = e.message; }
       detail.hidden = false; read.disabled = false; read.textContent = '🔍 もう一度読みこむ';
@@ -1128,8 +1191,13 @@ function openEditor(it, sub) {
       const item = { url: f.url.value, kind: f.kind.value, title: f.title.value, desc: f.desc.value, image: pick.get(), pr: f.pr.checked, vid,
         author: f.author.value, authorUrl: f.authorUrl.value };
       try {
+        if (f.kind.value === 'community' && item.image && !/^data:image\//.test(item.image)) {
+          try { item.image = await storeImage(item.image); }
+          catch (e) { throw new Error('画像を取りこめませんでした。「写真から選ぶ」で選びなおすか、画像を消してください'); }
+        }
         if (sub) {
-          await call('portalApprove', CODE, sub.id, item);
+          // 「✏️ 直して許可」は、申請の一覧で本人の確認にチェックしたときだけ押せる
+          await call('portalApprove', CODE, sub.id, { checked: true, edits: item });
           SUBS = await call('portalSubmissions', CODE); updateSubDot();
           load(true); toast('直して載せました'); openSubs('wait');
           return;
