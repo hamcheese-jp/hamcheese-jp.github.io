@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ハムチーズの作品集</title>
+<meta name="description" content="ゲーム・note の記事・TikTok の動画をまとめています">
+<meta property="og:title" content="ハムチーズの作品集">
+<meta property="og:description" content="ゲーム・note の記事・TikTok の動画をまとめています">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#fff7ec">
+<style>
+:root {
+  --bg: #fff7ec; --bg2: #ffeeda; --card: #ffffff; --ink: #3b2f2a; --sub: #8a766b; --line: #f0dcc6;
+  --accent: #ff8a5c; --accent2: #5cb8ff; --green: #58b368; --pr: #e0566b; --shadow: 0 4px 14px rgba(150, 100, 60, .12);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1f1a17; --bg2: #2a231f; --card: #2e2622; --ink: #f4e9df; --sub: #b9a597; --line: #44372f;
+    --shadow: 0 4px 14px rgba(0, 0, 0, .35);
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: "Hiragino Maru Gothic ProN", "M PLUS Rounded 1c", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  line-height: 1.6; -webkit-text-size-adjust: 100%;
+}
+a { color: inherit; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 16px 48px; }
+
+/* 上のあいさつ */
+header { text-align: center; padding: 36px 0 18px; }
+.icon { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; background: var(--bg2); border: 4px solid var(--card); box-shadow: var(--shadow); }
+.icon.empty { display: inline-flex; align-items: center; justify-content: center; font-size: 46px; }
+h1 { font-size: 24px; margin: 12px 0 4px; }
+.bio { color: var(--sub); margin: 0 auto; max-width: 560px; white-space: pre-wrap; font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+.chip { display: inline-block; padding: 6px 14px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow); text-decoration: none; font-size: 13px; font-weight: bold; }
+
+/* タブ */
+nav { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 8px 0; margin: 0 -16px; }
+.tabs { display: flex; gap: 6px; overflow-x: auto; padding: 0 16px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; border: 0; padding: 8px 14px; border-radius: 999px; background: var(--bg2); color: var(--ink); font: inherit; font-size: 14px; font-weight: bold; cursor: pointer; }
+.tab.on { background: var(--accent); color: #fff; }
+
+/* 一覧 */
+section { margin-top: 26px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+h2 { font-size: 18px; margin: 0; }
+.more { border: 0; background: none; color: var(--accent); font: inherit; font-size: 14px; font-weight: bold; cursor: pointer; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.grid.video { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+@media (max-width: 520px) {
+  .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid.video { grid-template-columns: 1fr 1fr; }
+}
+.card { position: relative; display: flex; flex-direction: column; background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); text-decoration: none; cursor: pointer; transition: transform .15s; min-width: 0; }
+.card:hover { transform: translateY(-2px); }
+.thumb { position: relative; aspect-ratio: 1200 / 630; background: var(--bg2); overflow: hidden; }
+.video .thumb { aspect-ratio: 3 / 4; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.play::after { content: "▶"; width: 48px; height: 48px; border-radius: 50%; background: rgba(0,0,0,.45); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; padding-left: 4px; }
+.body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.title { font-weight: bold; font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.desc { color: var(--sub); font-size: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.meta { margin-top: auto; padding-top: 4px; color: var(--sub); font-size: 11px; display: flex; gap: 6px; align-items: center; }
+.badge { position: absolute; top: 8px; left: 8px; z-index: 2; background: var(--pr); color: #fff; font-size: 11px; font-weight: bold; padding: 1px 8px; border-radius: 6px; }
+.new { background: var(--green); }
+body.admin .wrap { padding-bottom: 90px; }
+
+/* 応援ボタン */
+.support { display: flex; flex-direction: column; gap: 10px; }
+.sbtn { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; background: linear-gradient(135deg, #ffb27d, #ff7f9c); color: #fff; text-decoration: none; box-shadow: var(--shadow); cursor: pointer; }
+.sbtn img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: rgba(255,255,255,.3); flex: none; }
+.sbtn b { display: block; font-size: 15px; }
+.sbtn span { font-size: 12px; opacity: .95; }
+
+.empty-msg { text-align: center; color: var(--sub); padding: 40px 0; font-size: 14px; }
+footer { margin-top: 44px; text-align: center; color: var(--sub); font-size: 12px; }
+footer p { margin: 4px 0; }
+.admin-link { border: 0; background: none; color: var(--sub); opacity: .5; font-size: 16px; cursor: pointer; margin-top: 8px; }
+
+/* 管理者 */
+.abar { position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 20; display: flex; gap: 6px; background: var(--ink); padding: 6px; border-radius: 999px; box-shadow: 0 6px 20px rgba(0,0,0,.25); max-width: calc(100% - 32px); }
+.abar button { border: 0; border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 13px; font-weight: bold; cursor: pointer; background: var(--bg); color: var(--ink); white-space: nowrap; }
+.abar .main { background: var(--accent); color: #fff; }
+.tools { position: absolute; top: 6px; right: 6px; z-index: 3; display: flex; gap: 4px; }
+.tools button { border: 0; width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.92); box-shadow: 0 1px 4px rgba(0,0,0,.25); cursor: pointer; font-size: 14px; padding: 0; color: #333; }
+
+.modal { position: fixed; inset: 0; z-index: 30; background: rgba(30, 20, 15, .55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal[hidden] { display: none; }
+.box { background: var(--card); color: var(--ink); border-radius: 18px; width: 100%; max-width: 460px; max-height: calc(100vh - 32px); overflow: auto; padding: 18px; }
+.box h3 { margin: 0 0 12px; font-size: 17px; }
+label { display: block; font-size: 12px; font-weight: bold; color: var(--sub); margin: 10px 0 4px; }
+input[type=text], input[type=password], input[type=url], textarea, select {
+  width: 100%; font: inherit; font-size: 16px; padding: 9px 11px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); color: var(--ink);
+}
+textarea { min-height: 70px; resize: vertical; }
+.check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); font-weight: normal; }
+.hint { font-size: 12px; color: var(--sub); margin: 4px 0 0; }
+.row { display: flex; gap: 8px; margin-top: 16px; }
+.row button, .btn { flex: 1; border: 0; padding: 11px; border-radius: 12px; font: inherit; font-weight: bold; cursor: pointer; background: var(--bg2); color: var(--ink); }
+.row .go, .btn.go { background: var(--accent); color: #fff; }
+.btn:disabled, .row button:disabled { opacity: .5; cursor: default; }
+.pv { margin-top: 10px; border-radius: 12px; overflow: hidden; background: var(--bg2); max-height: 180px; }
+.pv img { width: 100%; display: block; max-height: 180px; object-fit: cover; }
+.err { color: var(--pr); font-size: 13px; margin-top: 8px; white-space: pre-wrap; }
+
+.player { background: #000; border-radius: 16px; overflow: hidden; width: min(360px, 100%); aspect-ratio: 9 / 16; max-height: calc(100vh - 100px); position: relative; }
+.player iframe { width: 100%; height: 100%; border: 0; display: block; }
+.close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); font-size: 20px; cursor: pointer; }
+
+.toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); z-index: 40; background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 13px; box-shadow: var(--shadow); }
+.toast[hidden] { display: none; }
+.loading { text-align: center; color: var(--sub); padding: 60px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="head"></header>
+  <nav><div class="tabs" id="tabs"></div></nav>
+  <main id="main"><div class="loading">🌱 よみこみ中…</div></main>
+  <footer id="foot"></footer>
+</div>
+
+<div class="modal" id="modal" hidden><div class="box" id="box"></div></div>
+<div class="modal" id="vmodal" hidden><button class="close" id="vclose" aria-label="とじる">✕</button><div class="player" id="player"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// ============================================================================
+// 作品のまとめページ。一覧は GAS（ポータル.js）から読む
+//   API：GAS の公開URL（おてんきプランターと同じ）。パソコンの確認用サーバーでは /portal-api
+// ============================================================================
+const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '/portal-api'
+  : 'https://script.google.com/macros/s/AKfycbwg3uCPrWvaBtUxxa9JE306ZZRChZBRXilaNGiwq1Ue-7H6CYaESioeJJhTiaYyn6N6jg/exec';
+
+const KINDS = {
+  game:    { tab: '🎮 ゲーム',   head: '🎮 ゲーム',        ph: '🎮' },
+  video:   { tab: '🎬 動画',     head: '🎬 動画',          ph: '🎬' },
+  note:    { tab: '📝 note',     head: '📝 note の記事',   ph: '📝' },
+  pr:      { tab: '🛍️ おすすめ', head: '🛍️ おすすめ（PR）', ph: '🛍️' },
+  support: { tab: '💝 応援',     head: '💝 応援する',      ph: '💝' },
+  other:   { tab: '🔗 そのほか', head: '🔗 そのほか',      ph: '🔗' }
+};
+const ORDER = ['game', 'video', 'note', 'pr', 'support', 'other'];
+const PER_SECTION = 6;
+
+let DATA = { settings: {}, items: [], notes: [] };
+let TAB = 'all';
+let CODE = '';
+try { CODE = sessionStorage.getItem('portal_code') || ''; } catch (e) {}
+try { TAB = localStorage.getItem('portal_tab') || 'all'; } catch (e) {}
+
+const $ = id => document.getElementById(id);
+function el(tag, attrs, kids) {
+  const e = document.createElement(tag);
+  for (const k in attrs || {}) {
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === 'text') e.textContent = v;
+    else if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v);
+  }
+  for (const c of [].concat(kids || [])) if (c) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+  return e;
+}
+const safeUrl = u => /^https?:\/\//i.test(String(u || '')) ? String(u) : '';
+const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
+
+async function call(fn, ...args) {
+  const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args }) });
+  const j = await res.json();
+  if (!j.ok) throw new Error(j.error || 'うまくいきませんでした');
+  return j.r;
+}
+
+let toastT = 0;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2600);
+}
+
+// ---------------------------------------------------------------- 読みこみ
+async function load(fresh) {
+  if (!fresh) {
+    try { const c = JSON.parse(localStorage.getItem('portal_cache') || 'null'); if (c) { DATA = c; render(); } } catch (e) {}
+  }
+  try {
+    DATA = await call('portalList');
+    try { localStorage.setItem('portal_cache', JSON.stringify(DATA)); } catch (e) {}
+    render();
+    setupAds();
+  } catch (e) {
+    if (!DATA.at) $('main').innerHTML = '<div class="empty-msg">よみこめませんでした。しばらくしてから開きなおしてください。</div>';
+  }
+}
+
+// 種類ごとのならび。note は自動で取った記事と手で足した記事をまとめて新しい順
+function listOf(kind) {
+  const own = DATA.items.filter(it => it.kind === kind);
+  if (kind !== 'note') return own;
+  const seen = new Set(own.map(it => it.url));
+  return own.concat((DATA.notes || []).filter(n => !seen.has(n.url))).sort((a, b) => (b.added || 0) - (a.added || 0));
+}
+
+// ---------------------------------------------------------------- 画面
+function render() {
+  const s = DATA.settings || {};
+  const name = s.name || 'ハムチーズの作品集';
+  document.title = name;
+
+  // 上のあいさつ
+  const head = $('head'); head.innerHTML = '';
+  head.appendChild(safeUrl(s.icon) ? el('img', { class: 'icon', src: s.icon, alt: '' }) : el('div', { class: 'icon empty', text: '🌱' }));
+  head.appendChild(el('h1', { text: name }));
+  head.appendChild(el('p', { class: 'bio', text: s.bio || 'ゲーム・note の記事・TikTok の動画をまとめています' }));
+  if ((s.links || []).length) head.appendChild(el('div', { class: 'chips' }, s.links.map(l => el('a', { class: 'chip', href: l.url, target: '_blank', rel: 'noopener', text: l.label }))));
+
+  // タブ（中身がある種類だけ）
+  const kinds = ORDER.filter(k => listOf(k).length);
+  if (TAB !== 'all' && !kinds.includes(TAB)) TAB = 'all';
+  const tabs = $('tabs'); tabs.innerHTML = '';
+  [['all', '✨ すべて']].concat(kinds.map(k => [k, KINDS[k].tab])).forEach(([k, label]) => {
+    tabs.appendChild(el('button', { class: 'tab' + (TAB === k ? ' on' : ''), text: label, onclick: () => setTab(k) }));
+  });
+
+  // 一覧
+  const main = $('main'); main.innerHTML = '';
+  if (!kinds.length) {
+    main.appendChild(el('div', { class: 'empty-msg', text: CODE ? '下の「＋ 追加」から、URLを貼って登録できます' : 'まだ何もありません' }));
+  }
+  const show = TAB === 'all' ? kinds : [TAB];
+  for (const k of show) {
+    const list = listOf(k);
+    const cut = TAB === 'all' && list.length > PER_SECTION;
+    const sec = el('section');
+    sec.appendChild(el('div', { class: 'sec-head' }, [
+      el('h2', { text: KINDS[k].head }),
+      cut ? el('button', { class: 'more', text: 'もっと見る（' + list.length + '）›', onclick: () => setTab(k) }) : null
+    ]));
+    const shown = cut ? list.slice(0, PER_SECTION) : list;
+    if (k === 'support') sec.appendChild(el('div', { class: 'support' }, shown.map(supportBtn)));
+    else sec.appendChild(el('div', { class: 'grid' + (k === 'video' ? ' video' : '') }, shown.map(card)));
+    main.appendChild(sec);
+  }
+
+  // 下
+  const foot = $('foot'); foot.innerHTML = '';
+  if (DATA.items.some(it => it.pr)) foot.appendChild(el('p', { text: '※「PR」がついたリンクは広告（アフィリエイト）です。リンク先で買い物をすると、このページの作者に紹介料が入ることがあります。' }));
+  foot.appendChild(el('p', { text: '© ' + new Date().getFullYear() + ' ' + name }));
+  if (!CODE) foot.appendChild(el('button', { class: 'admin-link', title: '管理者', text: '🛠️', onclick: openLogin }));
+
+  renderAdminBar();
+}
+
+function setTab(k) {
+  TAB = k;
+  try { localStorage.setItem('portal_tab', k); } catch (e) {}
+  render();
+  window.scrollTo({ top: Math.min(window.scrollY, $('tabs').parentNode.offsetTop), behavior: 'smooth' });
+}
+
+const DAY = 86400000;
+function card(it) {
+  const img = safeUrl(it.image);
+  const isNew = it.added && Date.now() - it.added < 14 * DAY;
+  const thumb = el('div', { class: 'thumb' }, [
+    img ? el('img', { src: img, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer', onerror: e => { e.target.replaceWith(el('div', { class: 'ph', text: KINDS[it.kind].ph })); } })
+        : el('div', { class: 'ph', text: (KINDS[it.kind] || KINDS.other).ph }),
+    it.kind === 'video' ? el('div', { class: 'play' }) : null
+  ]);
+  const date = it.kind === 'note' && it.added ? new Date(it.added).toLocaleDateString('ja-JP') : '';
+  const c = el('a', { class: 'card', href: it.url, target: '_blank', rel: it.pr ? 'noopener sponsored' : 'noopener' }, [
+    it.pr ? el('span', { class: 'badge', text: 'PR' }) : null,
+    isNew && !it.pr ? el('span', { class: 'badge new', text: 'NEW' }) : null,
+    thumb,
+    el('div', { class: 'body' }, [
+      el('div', { class: 'title', text: it.title }),
+      it.desc ? el('div', { class: 'desc', text: it.desc }) : null,
+      el('div', { class: 'meta', text: [date, host(it.url)].filter(Boolean).join(' ・ ') })
+    ])
+  ]);
+  if (it.kind === 'video' && it.vid) c.addEventListener('click', e => { e.preventDefault(); openVideo(it); });
+  if (CODE && !it.auto) c.appendChild(adminTools(it));
+  return c;
+}
+
+function supportBtn(it) {
+  const img = safeUrl(it.image);
+  const b = el('a', { class: 'sbtn', href: it.url, target: '_blank', rel: 'noopener' }, [
+    img ? el('img', { src: img, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer' }) : null,
+    el('div', {}, [el('b', { text: it.title }), it.desc ? el('span', { text: it.desc }) : null])
+  ]);
+  if (CODE) b.appendChild(adminTools(it));
+  return b;
+}
+
+// TikTok の動画はページの中で再生する
+function openVideo(it) {
+  $('player').innerHTML = '';
+  $('player').appendChild(el('iframe', { src: 'https://www.tiktok.com/player/v1/' + encodeURIComponent(it.vid) + '?autoplay=1&rel=0', allow: 'autoplay; fullscreen; encrypted-media', allowfullscreen: '' }));
+  $('vmodal').hidden = false;
+}
+function closeVideo() { $('vmodal').hidden = true; $('player').innerHTML = ''; }
+$('vclose').onclick = closeVideo;
+$('vmodal').onclick = e => { if (e.target === $('vmodal')) closeVideo(); };
+
+// ---------------------------------------------------------------- 広告（AdSense の ID を設定したときだけ）
+let adsDone = false;
+function setupAds() {
+  const id = (DATA.settings || {}).adsense;
+  if (adsDone || !id || !/^ca-pub-\d+$/.test(id)) return;
+  adsDone = true;
+  const s = document.createElement('script');
+  s.async = true; s.crossOrigin = 'anonymous';
+  s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(id);
+  document.head.appendChild(s);
+}
+
+// ---------------------------------------------------------------- 管理者
+function openModal(build) { const box = $('box'); box.innerHTML = ''; build(box); $('modal').hidden = false; }
+function closeModal() { $('modal').hidden = true; }
+$('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
+
+function openLogin() {
+  openModal(box => {
+    const inp = el('input', { type: 'password', autocomplete: 'off', inputmode: 'numeric' });
+    const err = el('div', { class: 'err' });
+    const go = el('button', { class: 'go', text: 'はいる', onclick: async () => {
+      go.disabled = true; err.textContent = '';
+      try {
+        await call('portalCheckCode', inp.value);
+        CODE = inp.value;
+        try { sessionStorage.setItem('portal_code', CODE); } catch (e) {}
+        closeModal(); render(); toast('管理者になりました');
+      } catch (e) { err.textContent = e.message; go.disabled = false; }
+    } });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') go.click(); });
+    box.append(el('h3', { text: '🛠️ 管理者' }), el('label', { text: '管理者コード' }), inp, err,
+      el('div', { class: 'row' }, [el('button', { text: 'やめる', onclick: closeModal }), go]));
+    setTimeout(() => inp.focus(), 50);
+  });
+}
+
+function renderAdminBar() {
+  let bar = document.querySelector('.abar');
+  document.body.classList.toggle('admin', !!CODE);
+  if (!CODE) { if (bar) bar.remove(); return; }
+  if (bar) return;
+  bar = el('div', { class: 'abar' }, [
+    el('button', { class: 'main', text: '＋ 追加', onclick: () => openEditor(null) }),
+    el('button', { text: '⚙️ 設定', onclick: openSettings }),
+    el('button', { text: '🔄', title: '読みなおす', onclick: () => load(true).then(() => toast('読みなおしました')) }),
+    el('button', { text: '🚪', title: '管理者をやめる', onclick: () => { CODE = ''; try { sessionStorage.removeItem('portal_code'); } catch (e) {} render(); } })
+  ]);
+  document.body.appendChild(bar);
+}
+
+function adminTools(it) {
+  const stop = fn => e => { e.preventDefault(); e.stopPropagation(); fn(); };
+  return el('div', { class: 'tools' }, [
+    el('button', { title: '上へ', text: '↑', onclick: stop(() => move(it, -1)) }),
+    el('button', { title: '下へ', text: '↓', onclick: stop(() => move(it, 1)) }),
+    el('button', { title: '直す', text: '✏️', onclick: stop(() => openEditor(it)) }),
+    el('button', { title: '消す', text: '🗑️', onclick: stop(() => remove(it)) })
+  ]);
+}
+
+async function move(it, dir) {
+  // 同じ種類の中でとなりと入れかえる（全部の並びのうち、同じ種類のとなりまで動かす）
+  const same = DATA.items.filter(x => x.kind === it.kind);
+  const i = same.indexOf(it), j = i + dir;
+  if (j < 0 || j >= same.length) return;
+  const steps = Math.abs(DATA.items.indexOf(same[j]) - DATA.items.indexOf(it));
+  try {
+    for (let n = 0; n < steps; n++) await call('portalMove', CODE, it.id, dir);
+    await load(true);
+  } catch (e) { toast(e.message); }
+}
+
+async function remove(it) {
+  if (!confirm('「' + it.title + '」を一覧から消しますか？')) return;
+  try { await call('portalRemove', CODE, it.id); await load(true); toast('消しました'); } catch (e) { toast(e.message); }
+}
+
+// 追加・直す画面。URL を貼って「読みこむ」→ 題名・画像が入る → 直して「登録」
+function openEditor(it) {
+  openModal(box => {
+    const f = {
+      url: el('input', { type: 'url', placeholder: 'https://…', value: it ? it.url : '' }),
+      kind: el('select', {}, ORDER.map(k => el('option', { value: k, text: KINDS[k].tab }))),
+      title: el('input', { type: 'text', value: it ? it.title : '' }),
+      desc: el('textarea', {}, it ? [it.desc] : []),
+      image: el('input', { type: 'url', placeholder: 'https://…（なくてもよい）', value: it ? it.image : '' }),
+      pr: el('input', { type: 'checkbox' })
+    };
+    let vid = it ? it.vid : '';
+    f.kind.value = it ? it.kind : 'game';
+    f.pr.checked = it ? !!it.pr : false;
+    const pv = el('div', { class: 'pv' });
+    const showPv = () => { pv.innerHTML = ''; if (safeUrl(f.image.value)) pv.appendChild(el('img', { src: f.image.value, alt: '', referrerpolicy: 'no-referrer' })); };
+    f.image.addEventListener('input', showPv); showPv();
+    f.kind.addEventListener('change', () => { if (f.kind.value === 'pr') f.pr.checked = true; });
+    const err = el('div', { class: 'err' });
+    const detail = el('div', { hidden: it ? null : '' });
+
+    const read = el('button', { class: 'btn go', text: '🔍 読みこむ', onclick: async () => {
+      read.disabled = true; err.textContent = ''; read.textContent = '読みこみ中…';
+      try {
+        const p = await call('portalPreview', CODE, f.url.value);
+        f.url.value = p.url; f.kind.value = p.kind; f.pr.checked = !!p.pr; vid = p.vid || '';
+        if (p.title) f.title.value = p.title;
+        if (p.desc) f.desc.value = p.desc;
+        if (p.image) f.image.value = p.image;
+        showPv();
+        if (p.note || !p.title) err.textContent = p.note || '題名が読めなかったので、手で入れてください';
+      } catch (e) { err.textContent = e.message; }
+      detail.hidden = false; read.disabled = false; read.textContent = '🔍 もう一度読みこむ';
+    } });
+
+    const save = el('button', { class: 'go', text: it ? '直す' : '登録する', onclick: async () => {
+      save.disabled = true; err.textContent = '';
+      const item = { url: f.url.value, kind: f.kind.value, title: f.title.value, desc: f.desc.value, image: f.image.value, pr: f.pr.checked, vid };
+      try {
+        if (it) await call('portalUpdate', CODE, it.id, item); else await call('portalAdd', CODE, item);
+        closeModal(); await load(true); toast(it ? '直しました' : '登録しました');
+      } catch (e) { err.textContent = e.message; save.disabled = false; }
+    } });
+
+    detail.append(
+      el('label', { text: '種類' }), f.kind,
+      el('label', { text: '題名' }), f.title,
+      el('label', { text: '説明' }), f.desc,
+      el('label', { text: '画像のURL' }), f.image, pv,
+      el('label', { class: 'check' }, [f.pr, '「PR」をつける（広告・アフィリエイトのリンク）']),
+      el('p', { class: 'hint', text: 'アフィリエイトのリンクは「PR」をつける決まりがあります（おすすめ はいつも PR がつきます）。' })
+    );
+    box.append(
+      el('h3', { text: it ? '✏️ 直す' : '＋ URLを貼って追加' }),
+      el('label', { text: 'URL' }), f.url,
+      el('p', { class: 'hint', text: 'ゲーム・note・TikTok・アフィリエイト・応援のページなど。読みこむと題名と画像が自動で入ります。' }),
+      el('div', { class: 'row' }, [read]),
+      detail, err,
+      el('div', { class: 'row' }, [el('button', { text: 'やめる', onclick: closeModal }), save])
+    );
+    if (!it) setTimeout(() => f.url.focus(), 50);
+  });
+}
+
+function openSettings() {
+  const s = DATA.settings || {};
+  openModal(box => {
+    const f = {
+      name: el('input', { type: 'text', value: s.name || '', placeholder: 'ハムチーズの作品集' }),
+      bio: el('textarea', {}, [s.bio || '']),
+      icon: el('input', { type: 'url', value: s.icon || '', placeholder: 'https://…' }),
+      noteUser: el('input', { type: 'text', value: s.noteUser || '', placeholder: '例：hamcheese' }),
+      links: el('textarea', { placeholder: 'X https://x.com/…\nTikTok https://www.tiktok.com/@…' }, [(s.links || []).map(l => l.label + ' ' + l.url).join('\n')]),
+      adsense: el('input', { type: 'text', value: s.adsense || '', placeholder: 'ca-pub-0000000000000000' })
+    };
+    const err = el('div', { class: 'err' });
+    const save = el('button', { class: 'go', text: '保存', onclick: async () => {
+      save.disabled = true; err.textContent = '';
+      const links = f.links.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+        const m = l.match(/^(.*?)\s+(https?:\/\/\S+)$/); return m ? { label: m[1], url: m[2] } : null;
+      }).filter(Boolean);
+      try {
+        await call('portalSaveSettings', CODE, { name: f.name.value, bio: f.bio.value, icon: f.icon.value, noteUser: f.noteUser.value, links, adsense: f.adsense.value });
+        closeModal(); await load(true); toast('保存しました');
+      } catch (e) { err.textContent = e.message; save.disabled = false; }
+    } });
+    box.append(
+      el('h3', { text: '⚙️ ページの設定' }),
+      el('label', { text: 'ページの名前' }), f.name,
+      el('label', { text: 'ひとこと' }), f.bio,
+      el('label', { text: 'アイコンの画像のURL' }), f.icon,
+      el('label', { text: 'note のユーザー名' }), f.noteUser,
+      el('p', { class: 'hint', text: 'note.com/○○ の ○○。入れると、新しい記事が自動で並びます（3時間ごとに読みなおし）。' }),
+      el('label', { text: '上に出すリンク（1行に「名前 URL」）' }), f.links,
+      el('label', { text: 'Google AdSense の ID（審査に通ってから）' }), f.adsense,
+      err,
+      el('div', { class: 'row' }, [el('button', { text: 'やめる', onclick: closeModal }), save])
+    );
+  });
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeVideo(); } });
+if (new URLSearchParams(location.search).has('admin') && !CODE) setTimeout(openLogin, 300);
+load(false);
+</script>
+</body>
+</html>
