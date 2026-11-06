@@ -60,7 +60,12 @@ h2 { font-size: 18px; margin: 0; }
 .card { position: relative; display: flex; flex-direction: column; background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); text-decoration: none; cursor: pointer; transition: transform .15s; min-width: 0; }
 .card:hover { transform: translateY(-2px); }
 .thumb { position: relative; aspect-ratio: 1200 / 630; background: var(--bg2); overflow: hidden; }
-.video .thumb { aspect-ratio: 3 / 4; }
+.video .thumb { aspect-ratio: 9 / 16; }
+/* 見えている動画を音なしで再生（画像の上に重ねる。押したときは大きく開く） */
+.thumb .live { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; opacity: 0; transition: opacity .5s; background: #000; }
+.thumb.playing .live { opacity: 1; }
+.thumb.playing .play { opacity: 0; }
+.play { transition: opacity .3s; }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .thumb .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; }
 .play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
@@ -244,6 +249,7 @@ function render() {
   });
 
   // 一覧
+  stopLive(); SEEN.clear();
   const main = $('main'); main.innerHTML = '';
   if (!kinds.length) {
     main.appendChild(el('div', { class: 'empty-msg', text: CODE ? '下の「＋ 追加」から、URLを貼って登録できます' : 'まだ何もありません' }));
@@ -288,6 +294,7 @@ function card(it) {
         : el('div', { class: 'ph', text: (KINDS[it.kind] || KINDS.other).ph }),
     it.kind === 'video' ? el('div', { class: 'play' }) : null
   ]);
+  if (it.kind === 'video' && it.vid && /tiktok\.com/i.test(it.url)) { thumb.dataset.vid = it.vid; LIVE.observe(thumb); }
   const date = it.kind === 'note' && it.added ? new Date(it.added).toLocaleDateString('ja-JP') : '';
   const c = el('a', { class: 'card', href: it.url, target: '_blank', rel: it.pr ? 'noopener sponsored' : 'noopener' }, [
     it.pr ? el('span', { class: 'badge', text: 'PR' }) : null,
@@ -314,13 +321,63 @@ function supportBtn(it) {
   return b;
 }
 
-// TikTok の動画はページの中で再生する
+// ---------------------------------------------------------------- 見えている動画を1本だけ音なしで再生
+//   画面のまん中にいちばん近い動画を、少し止まってから再生。ほかは止める（スマホが重くならないように）
+const QUIET = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || (navigator.connection && navigator.connection.saveData);
+const SEEN = new Map();
+let liveThumb = null, liveTimer = 0;
+const LIVE = 'IntersectionObserver' in window ? new IntersectionObserver(es => {
+  for (const e of es) { if (e.isIntersecting && e.intersectionRatio >= 0.6) SEEN.set(e.target, true); else SEEN.delete(e.target); }
+  pickLive();
+}, { threshold: [0, 0.6, 1] }) : { observe() {} };
+
+function pickLive() {
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(() => {
+    let best = null, bestD = 1e9;
+    if (!QUIET && !document.hidden && $('vmodal').hidden) {
+      const mid = innerHeight / 2;
+      for (const t of SEEN.keys()) {
+        if (!t.isConnected) { SEEN.delete(t); continue; }
+        const r = t.getBoundingClientRect(), d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < bestD) { bestD = d; best = t; }
+      }
+    }
+    if (best === liveThumb) return;
+    stopLive();
+    if (best) startLive(best);
+  }, 700);
+}
+function startLive(t) {
+  liveThumb = t;
+  const f = el('iframe', { class: 'live', title: '動画', tabindex: '-1', allow: 'autoplay; encrypted-media',
+    src: 'https://www.tiktok.com/player/v1/' + encodeURIComponent(t.dataset.vid) +
+      '?autoplay=1&loop=1&controls=0&progress_bar=0&play_button=0&volume_control=0&fullscreen_button=0&timestamp=0&music_info=0&description=0&rel=0&native_context_menu=0&closed_caption=0' });
+  f.addEventListener('load', () => {
+    // 音を消して再生（TikTok の再生画面へのお願い。聞いてもらえないときは何もおきない）
+    for (const type of ['mute', 'play']) { try { f.contentWindow.postMessage({ type, 'x-tiktok-player': true }, '*'); } catch (e) {} }
+    setTimeout(() => { if (liveThumb === t) t.classList.add('playing'); }, 600);
+  });
+  t.appendChild(f);
+}
+function stopLive() {
+  if (!liveThumb) return;
+  liveThumb.classList.remove('playing');
+  const f = liveThumb.querySelector('.live');
+  if (f) f.remove();
+  liveThumb = null;
+}
+addEventListener('scroll', pickLive, { passive: true });
+document.addEventListener('visibilitychange', pickLive);
+
+// TikTok の動画はページの中で再生する（押したとき：音ありで大きく）
 function openVideo(it) {
+  stopLive();
   $('player').innerHTML = '';
   $('player').appendChild(el('iframe', { src: 'https://www.tiktok.com/player/v1/' + encodeURIComponent(it.vid) + '?autoplay=1&rel=0', allow: 'autoplay; fullscreen; encrypted-media', allowfullscreen: '' }));
   $('vmodal').hidden = false;
 }
-function closeVideo() { $('vmodal').hidden = true; $('player').innerHTML = ''; }
+function closeVideo() { $('vmodal').hidden = true; $('player').innerHTML = ''; pickLive(); }
 $('vclose').onclick = closeVideo;
 $('vmodal').onclick = e => { if (e.target === $('vmodal')) closeVideo(); };
 
