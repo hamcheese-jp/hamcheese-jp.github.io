@@ -76,6 +76,86 @@ h2 { font-size: 18px; margin: 0; }
 .meta { margin-top: auto; padding-top: 4px; color: var(--sub); font-size: 11px; display: flex; gap: 6px; align-items: center; }
 .badge { position: absolute; top: 8px; left: 8px; z-index: 2; background: var(--pr); color: #fff; font-size: 11px; font-weight: bold; padding: 1px 8px; border-radius: 6px; }
 .new { background: var(--green); }
+.hot { background: #ff7a1a; }
+.count { display: inline-block; background: var(--ink); color: var(--bg); border-radius: 6px; padding: 0 6px; font-size: 11px; font-weight: bold; }
+.sbtn .count { position: absolute; left: 10px; bottom: -8px; }
+
+/* アンケート */
+.poll { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); padding: 16px; }
+.poll h2 { margin-bottom: 4px; }
+.poll .q { font-weight: bold; margin: 0 0 10px; }
+.opt { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 2px solid var(--line); border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-size: 15px; }
+.opt.on { border-color: var(--accent); background: var(--bg); }
+.opt input { accent-color: var(--accent); width: 18px; height: 18px; }
+.res { margin-bottom: 8px; }
+.res .lab { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 3px; }
+.bar { height: 12px; background: var(--bg2); border-radius: 6px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, #ffb27d, var(--accent)); border-radius: 6px; }
+.privacy { font-size: 11px; opacity: .8; }
+
+/* 集計（管理者） */
+.box.wide { max-width: 760px; }
+.periods { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.periods button { border: 0; padding: 7px 12px; border-radius: 999px; background: var(--bg2); color: var(--ink); font: inherit; font-size: 13px; font-weight: bold; cursor: pointer; }
+.periods button.on { background: var(--accent); color: #fff; }
+.nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 520px) { .nums { grid-template-columns: repeat(2, 1fr); } }
+.num { background: var(--bg); border-radius: 12px; padding: 10px; text-align: center; }
+.num b { display: block; font-size: 24px; color: var(--accent); line-height: 1.2; }
+.num span { font-size: 11px; color: var(--sub); }
+.st h4 { margin: 18px 0 8px; font-size: 14px; }
+.rank { width: 100%; border-collapse: collapse; font-size: 13px; }
+.rank th { text-align: left; color: var(--sub); font-weight: normal; font-size: 11px; padding: 4px; border-bottom: 1px solid var(--line); }
+.rank td { padding: 6px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.rank td.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rank .t { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hbar { display: grid; grid-template-columns: minmax(80px, 34%) 1fr auto; gap: 8px; align-items: center; font-size: 13px; margin-bottom: 5px; }
+.hbar .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cols { display: flex; align-items: flex-end; gap: 2px; height: 90px; padding-top: 4px; }
+.cols div { flex: 1; background: var(--accent2); border-radius: 3px 3px 0 0; min-height: 1px; position: relative; }
+.cols-lab { display: flex; justify-content: space-between; font-size: 10px; color: var(--sub); margin-top: 3px; }
+.cmt { background: var(--bg); border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; font-size: 13px; white-space: pre-wrap; }
+.cmt small { color: var(--sub); display: block; }
+.sheet-link { display: block; text-align: center; margin-top: 16px; padding: 11px; border-radius: 12px; background: var(--green); color: #fff; font-weight: bold; text-decoration: none; }
+body.admin .wrap { padding-bottom: 90px; }
+
+/* 応援ボタン */
+.support { display: flex; flex-direction: column; gap: 10px; }
+.sbtn { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; background: linear-gradient(135deg, #ffb27d, #ff7f9c); color: #fff; text-decoration: none; box-shadow: var(--shadow); cursor: pointer; }
+.sbtn img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: rgba(255,255,255,.3); flex: none; }
+.sbtn b { display: block; font-size: 15px; }
+.sbtn span { font-size: 12px; opacity: .95; }
+
+.empty-msg { text-align: center; color: var(--sub); padding: 40px 0; font-size: 14px; }
+footer { margin-top: 44px; text-align: center; color: var(--sub); font-size: 12px; }
+footer p { margin: 4px 0; }
+.admin-link { border: 0; background: none; color: var(--sub); opacity: .5; font-size: 16px; cursor: pointer; margin-top: 8px; }
+
+/* 管理者 */
+.abar { position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 20; display: flex; gap: 6px; background: var(--ink); padding: 6px; border-radius: 999px; box-shadow: 0 6px 20px rgba(0,0,0,.25); max-width: calc(100% - 32px); }
+.abar button { border: 0; border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 13px; font-weight: bold; cursor: pointer; background: var(--bg); color: var(--ink); white-space: nowrap; }
+.abar .main { background: var(--accent); color: #fff; }
+.tools { position: absolute; top: 6px; right: 6px; z-index: 3; display: flex; gap: 4px; }
+.tools button { border: 0; width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.92); box-shadow: 0 1px 4px rgba(0,0,0,.25); cursor: pointer; font-size: 14px; padding: 0; color: #333; }
+
+.modal { position: fixed; inset: 0; z-index: 30; background: rgba(30, 20, 15, .55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal[hidden] { display: none; }
+.box { background: var(--card); color: var(--ink); border-radius: 18px; width: 100%; max-width: 460px; max-height: calc(100vh - 32px); overflow: auto; padding: 18px; }
+.box h3 { margin: 0 0 12px; font-size: 17px; }
+label { display: block; font-size: 12px; font-weight: bold; color: var(--sub); margin: 10px 0 4px; }
+input[type=text], input[type=password], input[type=url], textarea, select {
+  width: 100%; font: inherit; font-size: 16px; padding: 9px 11px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); color: var(--ink);
+}
+textarea { min-height: 70px; resize: vertical; }
+.check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); font-weight: normal; }
+.hint { font-size: 12px; color: var(--sub); margin: 4px 0 0; }
+.row { display: flex; gap: 8px; margin-top: 16px; }
+.row button, .btn { flex: 1; border: 0; padding: 11px; border-radius: 12px; font: inherit; font-weight: bold; cursor: pointer; background: var(--bg2); color: var(--ink); }
+.row .go, .btn.go { background: var(--accent); color: #fff; }
+.btn:disabled, .row button:disabled { opacity: .5; cursor: default; }
+.pv { margin-top: 10px; border-radius: 12px; overflow: hidden; background: var(--bg2); max-height: 180px; }
+.pv img { width: 100%; display: block; max-height: 180px; object-fit: cover; }
+.err { color: var(--pr); font-size: 13px; margin-top: 8px; white-space: pre-wrap; }
 body.admin .wrap { padding-bottom: 90px; }
 
 /* 応援ボタン */
@@ -208,6 +288,59 @@ async function call(fn, ...args) {
   return j.r;
 }
 
+// ---------------------------------------------------------------- 📊 集計のための記録
+//   見た・押した・動画・タブ・上のリンクを、少しためてから GAS に送る（portalTrack）
+//   訪問者ID は端末ごとのでたらめな文字。名前など個人がわかる情報は送らない。管理者の端末は数えない
+let VID = '', IS_NEW = false;
+try { VID = localStorage.getItem('portal_vid') || ''; } catch (e) {}
+if (!VID) {
+  VID = (Math.random().toString(36).slice(2) + Date.now().toString(36)).slice(0, 20);
+  IS_NEW = true;
+  try { localStorage.setItem('portal_vid', VID); } catch (e) {}
+}
+function trackOff() {
+  if (CODE || /[?&]admin\b/.test(location.search)) return true;
+  try { return localStorage.getItem('portal_notrack') === '1'; } catch (e) { return false; }
+}
+const REF_NAMES = { 't.co': 'X', 'x.com': 'X', 'twitter.com': 'X', 'l.facebook.com': 'Facebook', 'lm.facebook.com': 'Facebook', 'm.facebook.com': 'Facebook',
+  'l.instagram.com': 'Instagram', 'instagram.com': 'Instagram', 'tiktok.com': 'TikTok', 'note.com': 'note', 'line.me': 'LINE', 'threads.net': 'Threads', 'l.threads.net': 'Threads',
+  'google.com': 'Google検索', 'google.co.jp': 'Google検索', 'search.yahoo.co.jp': 'Yahoo!検索', 'bing.com': 'Bing検索', 'youtube.com': 'YouTube', 'hamcheese-jp.github.io': '自分のゲームから' };
+function trackMeta() {
+  const ua = navigator.userAgent || '';
+  const app = /Line\//.test(ua) ? 'LINE' : /Instagram/.test(ua) ? 'Instagram' : /FBAN|FBAV/.test(ua) ? 'Facebook' : /TikTok|musical_ly|Bytedance/i.test(ua) ? 'TikTok' : /Twitter/i.test(ua) ? 'X' : '';
+  const dev = /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad' : /iPhone/.test(ua) ? 'iPhone'
+    : /Android/.test(ua) ? (/Mobile/.test(ua) ? 'Android' : 'Androidタブレット') : 'パソコン';
+  const q = new URLSearchParams(location.search);
+  let ref = q.get('utm_source') || q.get('from') || '';
+  if (!ref && document.referrer) {
+    try {
+      const h = new URL(document.referrer).hostname.replace(/^www\./, '');
+      if (h !== location.hostname) ref = REF_NAMES[h] || REF_NAMES[h.split('.').slice(-2).join('.')] || h;
+    } catch (e) {}
+  }
+  if (!ref && app) ref = app;
+  return { ref, dev, app, isNew: IS_NEW };
+}
+const META = trackMeta();
+const TQ = [];
+let tqTimer = 0;
+function track(e, it, tab) {
+  if (trackOff()) return;
+  TQ.push({ e, id: (it && it.id) || '', title: (it && it.title) || '', kind: (it && it.kind) || '', tab: tab || TAB });
+  clearTimeout(tqTimer);
+  tqTimer = setTimeout(() => flushTrack(false), 3000);
+}
+function flushTrack(leaving) {
+  if (!TQ.length) return;
+  const body = JSON.stringify({ fn: 'portalTrack', args: [VID, TQ.splice(0, 40), META] });
+  if (leaving && navigator.sendBeacon) {
+    try { if (navigator.sendBeacon(API, new Blob([body], { type: 'text/plain;charset=utf-8' }))) return; } catch (e) {}
+  }
+  fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body, keepalive: true }).catch(() => {});
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) flushTrack(true); });
+addEventListener('pagehide', () => flushTrack(true));
+
 let toastT = 0;
 function toast(msg) {
   const t = $('toast'); t.textContent = msg; t.hidden = false;
@@ -221,6 +354,8 @@ async function load(fresh) {
   }
   try {
     DATA = await call('portalList');
+    // 🔥人気とアンケート（集計.js。まだ GAS に入っていなければ何も出さない）
+    call('portalExtras').then(x => { DATA.popular = x.popular || []; DATA.poll = x.poll || null; render(); }).catch(() => {});
     try { localStorage.setItem('portal_cache', JSON.stringify(DATA)); } catch (e) {}
     render();
     setupAds();
@@ -252,7 +387,7 @@ function render() {
   head.appendChild(safeImg(s.icon) ? el('img', { class: 'icon', src: s.icon, alt: '' }) : el('div', { class: 'icon empty', text: '🌱' }));
   head.appendChild(el('h1', { text: name }));
   head.appendChild(el('p', { class: 'bio', text: s.bio || 'ゲーム・note の記事・TikTok の動画をまとめています' }));
-  if ((s.links || []).length) head.appendChild(el('div', { class: 'chips' }, s.links.map(l => el('a', { class: 'chip', href: l.url, target: '_blank', rel: 'noopener', text: l.label }))));
+  if ((s.links || []).length) head.appendChild(el('div', { class: 'chips' }, s.links.map(l => el('a', { class: 'chip', href: l.url, target: '_blank', rel: 'noopener', text: l.label, onclick: () => track('link', { id: 'link:' + l.label, title: l.label, kind: 'link' }) }))));
 
   // タブ（中身がある種類だけ）
   const kinds = ORDER.filter(k => listOf(k).length);
@@ -282,10 +417,12 @@ function render() {
     else sec.appendChild(el('div', { class: 'grid' + (k === 'video' ? ' video' : '') }, shown.map(card)));
     main.appendChild(sec);
   }
+  if (DATA.poll && TAB === 'all') main.appendChild(pollBox(DATA.poll));
 
   // 下
   const foot = $('foot'); foot.innerHTML = '';
   if (DATA.items.some(it => it.pr)) foot.appendChild(el('p', { text: '※「PR」がついたリンクは広告（アフィリエイト）です。リンク先で買い物をすると、このページの作者に紹介料が入ることがあります。' }));
+  foot.appendChild(el('p', { class: 'privacy', text: 'よりよい作品づくりのため、このページが見られた回数や押されたリンクを数えています（名前など、個人がわかる情報は集めていません）。' }));
   foot.appendChild(el('p', { text: '© ' + new Date().getFullYear() + ' ' + name }));
   if (!CODE) foot.appendChild(el('button', { class: 'admin-link', title: '管理者', text: '🛠️', onclick: openLogin }));
 
@@ -293,6 +430,7 @@ function render() {
 }
 
 function setTab(k) {
+  if (k !== TAB) track('tab', null, k);
   TAB = k;
   try { localStorage.setItem('portal_tab', k); } catch (e) {}
   render();
@@ -311,16 +449,18 @@ function card(it) {
   if (it.kind === 'video' && tiktokId(it)) { thumb.dataset.vid = tiktokId(it); LIVE.observe(thumb); }
   const date = it.kind === 'note' && it.added ? new Date(it.added).toLocaleDateString('ja-JP') : '';
   const c = el('a', { class: 'card', href: it.url, target: '_blank', rel: it.pr ? 'noopener sponsored' : 'noopener' }, [
-    it.pr ? el('span', { class: 'badge', text: 'PR' }) : null,
-    isNew && !it.pr ? el('span', { class: 'badge new', text: 'NEW' }) : null,
+    it.pr ? el('span', { class: 'badge', text: 'PR' })
+      : (DATA.popular || []).includes(it.id) ? el('span', { class: 'badge hot', text: '🔥 人気' })
+      : isNew ? el('span', { class: 'badge new', text: 'NEW' }) : null,
     thumb,
     el('div', { class: 'body' }, [
       el('div', { class: 'title', text: it.title }),
       it.desc ? el('div', { class: 'desc', text: it.desc }) : null,
-      el('div', { class: 'meta', text: [date, host(it.url)].filter(Boolean).join(' ・ ') })
+      el('div', { class: 'meta' }, [[date, host(it.url)].filter(Boolean).join(' ・ '), clickCount(it)])
     ])
   ]);
-  if (it.kind === 'video' && tiktokId(it)) c.addEventListener('click', e => { e.preventDefault(); openVideo(it); });
+  if (it.kind === 'video' && tiktokId(it)) c.addEventListener('click', e => { e.preventDefault(); track('video', it); openVideo(it); });
+  else c.addEventListener('click', () => track('click', it));
   if (CODE && !it.auto) c.appendChild(adminTools(it));
   return c;
 }
@@ -329,10 +469,62 @@ function supportBtn(it) {
   const img = safeImg(it.image);
   const b = el('a', { class: 'sbtn', href: it.url, target: '_blank', rel: 'noopener' }, [
     img ? el('img', { src: img, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer' }) : null,
-    el('div', {}, [el('b', { text: it.title }), it.desc ? el('span', { text: it.desc }) : null])
+    el('div', {}, [el('b', { text: it.title }), it.desc ? el('span', { text: it.desc }) : null]),
+    clickCount(it)
   ]);
+  b.addEventListener('click', () => track('click', it));
   if (CODE) b.appendChild(adminTools(it));
   return b;
+}
+
+// 管理者のときだけ：この30日で押された回数
+let STATS30 = null;
+function clickCount(it) {
+  if (!CODE || !STATS30) return null;
+  const s = STATS30.items.find(x => x.id === it.id);
+  const n = s ? s.clicks + s.video : 0;
+  return el('span', { class: 'count', title: 'この30日で押された回数', text: '👆' + n });
+}
+async function loadStats30() {
+  try { STATS30 = await call('portalStats', CODE, 30); render(); } catch (e) {}
+}
+
+// ---------------------------------------------------------------- 🗳️ アンケート（見る人向け。答えたあとは割合を見せる）
+function pollVoted(id) { try { return localStorage.getItem('portal_voted_' + id) === '1'; } catch (e) { return false; } }
+function pollBox(p) {
+  const sec = el('section', { class: 'poll' }, [el('h2', { text: '🗳️ アンケート' }), el('p', { class: 'q', text: p.q })]);
+  if (pollVoted(p.id)) {
+    p.opts.forEach((o, i) => sec.appendChild(el('div', { class: 'res' }, [
+      el('div', { class: 'lab' }, [el('span', { text: o }), el('b', { text: (p.pct[i] || 0) + '%' })]),
+      el('div', { class: 'bar' }, [el('i', { style: 'width:' + (p.pct[i] || 0) + '%' })])
+    ])));
+    sec.appendChild(el('p', { class: 'hint', text: 'ありがとうございました！（' + p.total + '人が答えました）' }));
+    return sec;
+  }
+  let pick = -1;
+  const opts = p.opts.map((o, i) => {
+    const r = el('input', { type: 'radio', name: 'poll' });
+    const lab = el('label', { class: 'opt' }, [r, o]);
+    r.addEventListener('change', () => { pick = i; opts.forEach(x => x.classList.toggle('on', x === lab)); });
+    return lab;
+  });
+  const text = el('textarea', { maxlength: '200', placeholder: '作ってほしいゲームのアイデアなど（なくてもOK）' });
+  const err = el('div', { class: 'err' });
+  const go = el('button', { class: 'btn go', text: '送る', onclick: async () => {
+    if (pick < 0) { err.textContent = 'どれか1つ選んでください'; return; }
+    go.disabled = true; err.textContent = '';
+    try {
+      const r = await call('portalVote', VID, p.id, pick, text.value);
+      try { localStorage.setItem('portal_voted_' + p.id, '1'); } catch (e) {}
+      DATA.poll = r; render(); toast('ありがとうございました！');
+    } catch (e) {
+      err.textContent = e.message; go.disabled = false;
+      if (/もう答えて/.test(e.message)) { try { localStorage.setItem('portal_voted_' + p.id, '1'); } catch (x) {} }
+    }
+  } });
+  opts.forEach(o => sec.appendChild(o));
+  sec.append(text, err, el('div', { class: 'row' }, [go]));
+  return sec;
 }
 
 // ---------------------------------------------------------------- 見えている動画を1本だけ音なしで再生
@@ -421,7 +613,7 @@ function setupAds() {
 }
 
 // ---------------------------------------------------------------- 管理者
-function openModal(build) { PASTE = null; const box = $('box'); box.innerHTML = ''; build(box); $('modal').hidden = false; }
+function openModal(build) { PASTE = null; const box = $('box'); box.innerHTML = ''; box.classList.remove('wide'); build(box); $('modal').hidden = false; }
 function closeModal() { $('modal').hidden = true; PASTE = null; }
 
 // ---------------------------------------------------------------- 画像をえらぶ（写真・貼りつけ）
@@ -517,6 +709,8 @@ function openLogin() {
       try {
         await call('portalCheckCode', inp.value);
         CODE = inp.value;
+        try { localStorage.setItem('portal_notrack', '1'); } catch (e) {}
+        loadStats30();
         try { sessionStorage.setItem('portal_code', CODE); } catch (e) {}
         closeModal(); render(); toast('管理者になりました');
       } catch (e) { err.textContent = e.message; go.disabled = false; }
@@ -535,9 +729,10 @@ function renderAdminBar() {
   if (bar) return;
   bar = el('div', { class: 'abar' }, [
     el('button', { class: 'main', text: '＋ 追加', onclick: () => openEditor(null) }),
+    el('button', { text: '📊 集計', onclick: () => openStats(30) }),
     el('button', { text: '⚙️ 設定', onclick: openSettings }),
     el('button', { text: '🔄', title: '読みなおす', onclick: () => load(true).then(() => toast('読みなおしました')) }),
-    el('button', { text: '🚪', title: '管理者をやめる', onclick: () => { CODE = ''; try { sessionStorage.removeItem('portal_code'); } catch (e) {} render(); } })
+    el('button', { text: '🚪', title: '管理者をやめる', onclick: () => { CODE = ''; STATS30 = null; try { sessionStorage.removeItem('portal_code'); } catch (e) {} render(); } })
   ]);
   document.body.appendChild(bar);
 }
@@ -632,7 +827,70 @@ function openEditor(it) {
   });
 }
 
+// ---------------------------------------------------------------- 📊 集計の画面（管理者だけ）
+const KIND_NAMES = { game: 'ゲーム', video: '動画', note: 'note', pr: 'おすすめ', support: '応援', other: 'そのほか', link: '上のリンク' };
+function openStats(days) {
+  openModal(box => {
+    box.classList.add('wide');
+    box.appendChild(el('h3', { text: '📊 集計' }));
+    const per = el('div', { class: 'periods' }, [[1, '今日（24時間）'], [7, '7日'], [30, '30日'], [0, 'ぜんぶ']].map(([d, t]) =>
+      el('button', { class: d === days ? 'on' : '', text: t, onclick: () => openStats(d) })));
+    const body = el('div', { class: 'st' }, [el('div', { class: 'loading', text: '集計しています…' })]);
+    box.append(per, body, el('div', { class: 'row' }, [el('button', { text: 'とじる', onclick: closeModal })]));
+    call('portalStats', CODE, days).then(s => { body.innerHTML = ''; statsView(body, s); if (days === 30) { STATS30 = s; } })
+      .catch(e => { body.innerHTML = ''; body.appendChild(el('div', { class: 'err', text: e.message })); });
+  });
+}
+function hbars(list, label) {
+  const max = Math.max(1, ...list.map(x => x[1]));
+  return list.map(([k, v]) => el('div', { class: 'hbar' }, [el('span', { class: 't', text: label ? label(k) : k }),
+    el('div', { class: 'bar' }, [el('i', { style: 'width:' + (v * 100 / max) + '%' })]), el('b', { text: v })]));
+}
+function statsView(b, s) {
+  const num = (n, t) => el('div', { class: 'num' }, [el('b', { text: n.toLocaleString() }), el('span', { text: t })]);
+  b.appendChild(el('div', { class: 'nums' }, [num(s.people, '来た人'), num(s.newPeople, 'はじめての人'), num(s.views, '見た回数'), num(s.clicks, '押した回数')]));
+  if (!s.views && !s.clicks) b.appendChild(el('p', { class: 'hint', text: 'まだ記録がありません。ページが見られると、ここに数が出ます（管理者の端末は数えません）。' }));
+
+  if (s.days_.length > 1) {
+    const max = Math.max(1, ...s.days_.map(d => d.people));
+    b.append(el('h4', { text: '📅 日ごとの来た人' }),
+      el('div', { class: 'cols' }, s.days_.slice(-30).map(d => el('div', { title: d.day + '：' + d.people + '人・押した' + d.clicks, style: 'height:' + (d.people * 100 / max) + '%' }))),
+      el('div', { class: 'cols-lab' }, [el('span', { text: s.days_.slice(-30)[0].day.slice(5) }), el('span', { text: s.days_[s.days_.length - 1].day.slice(5) })]));
+  }
+  if (s.items.length) {
+    b.appendChild(el('h4', { text: '🏆 よく押されたもの（押した人の割合＝来た人のうち何%が押したか）' }));
+    b.appendChild(el('table', { class: 'rank' }, [
+      el('tr', {}, ['', '題名', '種類', '押した', '人', '割合'].map(t => el('th', { text: t }))),
+      ...s.items.slice(0, 20).map((it, i) => el('tr', {}, [el('td', { class: 'n', text: i + 1 }), el('td', { class: 't', text: it.title, title: it.title }),
+        el('td', { text: KIND_NAMES[it.kind] || it.kind }), el('td', { class: 'n', text: it.clicks + it.video }), el('td', { class: 'n', text: it.people }), el('td', { class: 'n', text: it.rate + '%' })]))
+    ]));
+  }
+  if (s.kinds.length) b.append(el('h4', { text: '🗂️ 種類ごとのクリック' }), ...hbars(s.kinds, k => KIND_NAMES[k] || k));
+  if (s.ref.length) b.append(el('h4', { text: '🚪 どこから来たか' }), ...hbars(s.ref));
+  if (s.dev.length) b.append(el('h4', { text: '📱 端末' }), ...hbars(s.dev));
+  if (s.app.length) b.append(el('h4', { text: '💬 アプリの中のブラウザで見た人' }), ...hbars(s.app));
+  if (s.tabs.length) b.append(el('h4', { text: '🔖 よく見られたタブ' }), ...hbars(s.tabs, k => (KINDS[k] && KINDS[k].tab) || (k === 'all' ? 'すべて' : k)));
+  if (s.views) {
+    const max = Math.max(1, ...s.hours);
+    b.append(el('h4', { text: '🕐 見られた時間（日本時間）' }),
+      el('div', { class: 'cols' }, s.hours.map((n, h) => el('div', { title: h + '時：' + n + '回', style: 'height:' + (n * 100 / max) + '%' }))),
+      el('div', { class: 'cols-lab' }, ['0時', '6時', '12時', '18時', '23時'].map(t => el('span', { text: t }))));
+  }
+  if (s.poll) {
+    b.appendChild(el('h4', { text: '🗳️ アンケート：' + s.poll.q + '（' + s.poll.total + '人' + (s.poll.on ? '' : '・今はページに出していません') + '）' }));
+    b.append(...hbars(s.poll.opts.map((o, i) => [o, s.poll.counts[i]])));
+    if (s.poll.comments.length) {
+      b.appendChild(el('h4', { text: '💬 ひとこと（新しい順）' }));
+      s.poll.comments.forEach(c => b.appendChild(el('div', { class: 'cmt' }, [c.text, el('small', { text: c.choice + ' ・ ' + new Date(c.at).toLocaleString('ja-JP') })])));
+    }
+  }
+  if (s.sheet) b.appendChild(el('a', { class: 'sheet-link', href: s.sheet, target: '_blank', rel: 'noopener', text: '📄 スプレッドシートで詳しく見る（「portal_集計」のシート）' }));
+  if (s.sheetError) b.appendChild(el('div', { class: 'err', text: 'スプレッドシートに書けませんでした：' + s.sheetError }));
+}
+
 function openSettings() {
+  // アンケートの今の中身（管理者の集計にあれば出していない物も）
+  const pollNow = (STATS30 && STATS30.poll) || (DATA.poll ? Object.assign({ on: true }, DATA.poll) : {});
   const s = DATA.settings || {};
   openModal(box => {
     const f = {
@@ -640,9 +898,13 @@ function openSettings() {
       bio: el('textarea', {}, [s.bio || '']),
       noteUser: el('input', { type: 'text', value: s.noteUser || '', placeholder: '例：hamcheese' }),
       links: el('textarea', { placeholder: 'X https://x.com/…\nTikTok https://www.tiktok.com/@…' }, [(s.links || []).map(l => l.label + ' ' + l.url).join('\n')]),
-      adsense: el('input', { type: 'text', value: s.adsense || '', placeholder: 'ca-pub-0000000000000000' })
+      adsense: el('input', { type: 'text', value: s.adsense || '', placeholder: 'ca-pub-0000000000000000' }),
+      pollQ: el('input', { type: 'text', value: pollNow.q || '', placeholder: '例：次に作ってほしいゲームは？' }),
+      pollOpts: el('textarea', { placeholder: 'パズル\nRPG\n育てるゲーム\nアクション' }, [(pollNow.opts || []).join('\n')]),
+      pollOn: el('input', { type: 'checkbox' })
     };
     const icon = imagePicker(s.icon || '', { shape: 'round', square: true });
+    f.pollOn.checked = !!pollNow.on;
     const err = el('div', { class: 'err' });
     const save = el('button', { class: 'go', text: '保存', onclick: async () => {
       save.disabled = true; err.textContent = '';
@@ -651,6 +913,8 @@ function openSettings() {
       }).filter(Boolean);
       try {
         await call('portalSaveSettings', CODE, { name: f.name.value, bio: f.bio.value, icon: icon.get(), noteUser: f.noteUser.value, links, adsense: f.adsense.value });
+        const pq = f.pollQ.value.trim(), po = f.pollOpts.value.split('\n').map(x => x.trim()).filter(Boolean);
+        if (pq || pollNow.q) await call('portalSavePoll', CODE, { q: pq, opts: po, on: f.pollOn.checked });
         closeModal(); await load(true); toast('保存しました');
       } catch (e) { err.textContent = e.message; save.disabled = false; }
     } });
@@ -663,6 +927,10 @@ function openSettings() {
       el('p', { class: 'hint', text: 'note.com/○○ の ○○。入れると、新しい記事が自動で並びます（3時間ごとに読みなおし）。' }),
       el('label', { text: '上に出すリンク（1行に「名前 URL」）' }), f.links,
       el('label', { text: 'Google AdSense の ID（審査に通ってから）' }), f.adsense,
+      el('label', { text: '🗳️ アンケートの質問' }), f.pollQ,
+      el('label', { text: '選ぶもの（1行に1つ・2〜8こ）' }), f.pollOpts,
+      el('label', { class: 'check' }, [f.pollOn, 'アンケートをページに出す']),
+      el('p', { class: 'hint', text: '質問か選ぶものを変えると、新しいアンケートとして数えなおします（前の答えはスプレッドシートに残ります）。' }),
       err,
       el('div', { class: 'row' }, [el('button', { text: 'やめる', onclick: closeModal }), save])
     );
@@ -671,6 +939,8 @@ function openSettings() {
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeVideo(); } });
 if (new URLSearchParams(location.search).has('admin') && !CODE) setTimeout(openLogin, 300);
+track('view', null);
+if (CODE) loadStats30();
 load(false);
 </script>
 </body>
