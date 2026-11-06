@@ -278,6 +278,11 @@ h1.logo-h { margin: 0; line-height: 0; }
 .subm .ok-btn { background: var(--green); color: #fff; }
 .subm .dest { font-size: 15px; color: var(--ink); background: var(--bg2); padding: 0 6px; border-radius: 6px; }
 .subm > .btn { width: 100%; margin-bottom: 8px; }
+.sub-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.sub-tools button { border: 0; padding: 7px 12px; border-radius: 10px; background: var(--bg2); color: var(--ink); font: inherit; font-size: 12px; font-weight: bold; cursor: pointer; }
+.sub-tools button.warn { background: var(--pr); color: #fff; }
+.sub-tools button:disabled { opacity: .5; cursor: default; }
+.sub-tabs button.flag:not(.on) { background: #ffe1d6; color: #b4361c; }
 .verify { margin-top: 10px; padding: 10px; border-radius: 10px; background: var(--bg); }
 .verify .check { margin: 0; font-weight: bold; }
 
@@ -848,6 +853,18 @@ function subCountToday() {
     return d;
   } catch (e) { return []; }
 }
+// 計算問題を解く：sha256(salt + ':' + 数) の先頭が bits ビットぶん 0 になる数をさがす（申請.js の portalPowOk_ と同じ）
+async function solvePow(ch) {
+  const enc = new TextEncoder();
+  const zeroBits = h => { let n = 0; for (const b of h) { if (b === 0) { n += 8; continue; } n += Math.clz32(b) - 24; break; } return n; };
+  for (let base = 0; base < 1e9; base += 1024) {
+    const jobs = [];
+    for (let i = base; i < base + 1024; i++) jobs.push(crypto.subtle.digest('SHA-256', enc.encode(ch.salt + ':' + i)).then(b => [i, new Uint8Array(b)]));
+    for (const [i, h] of await Promise.all(jobs)) if (zeroBits(h) >= ch.bits) return String(i);
+  }
+  throw new Error('確認がうまくいきませんでした');
+}
+
 function openSubmit() {
   openModal(box => {
     const f = {
@@ -866,6 +883,19 @@ function openSubmit() {
     const pick = imagePicker('');
     const err = el('div', { class: 'err' });
     const opened = Date.now();
+    // いたずらよけの計算問題：開いたらすぐもらって、入力しているあいだに解いておく
+    let pow = null;
+    const getPow = () => (pow = call('portalSubChallenge').then(async ch => {
+      if (ch.paused) return ch;
+      return Object.assign({}, ch, { nonce: await solvePow(ch) });
+    }));
+    getPow().then(ch => {
+      if (!ch.paused) return;
+      box.innerHTML = '';
+      box.append(el('h3', { text: '🎮 ゲームの申請' }),
+        el('p', { class: 'hint', text: '今は申請の受けつけを休んでいます。しばらくしてから、もう一度のぞいてみてください。' }),
+        el('div', { class: 'row' }, [el('button', { class: 'go', text: 'とじる', onclick: closeModal })]));
+    }).catch(() => {});
     const go = el('button', { class: 'go', text: '📮 申請する', onclick: async () => {
       err.textContent = '';
       const http = u => /^https?:\/\/\S+$/i.test(u.trim());
@@ -879,12 +909,19 @@ function openSubmit() {
       if (subCountToday().length >= SUB_LIMIT) return (err.textContent = '1台から申請できるのは1日' + SUB_LIMIT + '件までです。また明日おねがいします');
       // 開いてすぐ（2秒以内）の送信はロボットとみなして、受けつけたふりをする
       const bot = !!f.website.value || Date.now() - opened < 2000;
-      go.disabled = true; go.textContent = '送っています…';
+      go.disabled = true; go.textContent = '確かめています…';
       try {
-        if (!bot) await call('portalSubmit', VID, {
-          title: f.title.value, url: f.url.value.trim(), desc: f.desc.value, image: pick.get() || f.imageUrl.value.trim(),
-          author: f.author.value, authorUrl: f.authorUrl.value.trim(), contact: f.contact.value, owner: true, agree: true, website: f.website.value
-        });
+        if (!bot) {
+          let p = await pow.catch(() => getPow());
+          if (p.paused) throw new Error('今は申請の受けつけを休んでいます');
+          if (Date.now() - p.at > 35 * 60000) p = await getPow(); // 問題が古くなっていたら、もらいなおす
+          go.textContent = '送っています…';
+          await call('portalSubmit', VID, {
+            title: f.title.value, url: f.url.value.trim(), desc: f.desc.value, image: pick.get() || f.imageUrl.value.trim(),
+            author: f.author.value, authorUrl: f.authorUrl.value.trim(), contact: f.contact.value, owner: true, agree: true, website: f.website.value,
+            pow: { salt: p.salt, at: p.at, bits: p.bits, sig: p.sig, nonce: p.nonce }
+          });
+        }
         try { localStorage.setItem('portal_subs', JSON.stringify(subCountToday().concat(Date.now()))); } catch (e) {}
         box.innerHTML = '';
         box.append(el('div', { class: 'done' }, [
@@ -941,7 +978,9 @@ function openRules(fromForm) {
       '作者本人の申請かどうかを、作者のSNSなどで確かめます。確かめられないときは、作者のSNSでお聞きするか、見送ることがあります。',
       'ほかの人の作品を、自分の作品のように申請するのはやめてください。わかったときは消します。',
       '画像は、載せるときにこのページの中に取りこみます（あとから元の画像を変えても、ページの画像は変わりません）。',
-      'ゲームの中身があとから変わって決まりに合わなくなったときも、消すことがあります。',
+      'ゲームの中身があとから変わって決まりに合わなくなったときも、消すことがあります。載せているゲームは、ときどき見まわって確かめています。',
+      '連絡先は、見送ったとき（または90日たっても確かめられなかったとき）に消します。',
+      'いたずらを防ぐため、申請するときにブラウザで小さな確認の計算をします（数秒かかることがあります）。申請がとても多いときは、受けつけを休むことがあります。',
       '載せるかどうかは管理者が決めます。理由をお知らせしないで見送ることがあります。',
       '載せたあとでも、決まりに合わないとわかったときや、作者さんから頼まれたときは消すことがあります。',
       '題名・説明・画像は、見やすいように管理者が直すことがあります。',
@@ -1004,31 +1043,50 @@ function renderAdminBar() {
 }
 
 // ---------------------------------------------------------------- 📮 申請（管理者）
-let SUBS = null; // { list, wait }
+let SUBS = null; // { list, wait, paused, links: { at, flags, list } }
+const WEEK = 7 * DAY;
 async function loadSubs() {
-  try { SUBS = await call('portalSubmissions', CODE); updateSubDot(); } catch (e) {}
+  try { SUBS = await call('portalSubmissions', CODE); updateSubDot(); } catch (e) { return; }
+  // 掲載中のみんなのゲームの見まわり：前から1週間たっていたら、うらで自動でやる
+  const cm = (DATA.items || []).some(it => it.kind === 'community');
+  if (cm && SUBS.links && Date.now() - (SUBS.links.at || 0) > WEEK) {
+    try { SUBS.links = await call('portalCheckLinks', CODE); updateSubDot(); } catch (e) {}
+  }
 }
 function updateSubDot() {
   const d = $('subDot');
   if (!d) return;
-  const n = SUBS ? SUBS.wait : 0;
+  const wait = SUBS ? SUBS.wait : 0, flags = SUBS && SUBS.links ? SUBS.links.flags || 0 : 0;
+  const n = wait + flags;
   d.hidden = !n; d.textContent = n;
-  $('subBtn').title = n ? 'まだ見ていない申請が ' + n + ' 件' : '申請';
+  $('subBtn').title = [wait ? 'まだ見ていない申請が ' + wait + ' 件' : '', flags ? '確かめてほしいゲームが ' + flags + ' 件' : ''].filter(Boolean).join('・') || '申請';
 }
 const SUB_STATE = { '未確認': 'wait', '許可': 'ok', '見送り': 'no' };
 function openSubs(filter) {
   openModal(box => {
     box.classList.add('wide');
     box.appendChild(el('h3', { text: '📮 ゲームの申請' }));
+    const tools = el('div', { class: 'sub-tools' });
     const tabs = el('div', { class: 'sub-tabs' });
     const body = el('div', {}, [el('div', { class: 'loading', text: '読みこみ中…' })]);
-    box.append(tabs, body, el('div', { class: 'row' }, [el('button', { text: 'とじる', onclick: closeModal })]));
+    box.append(tools, tabs, body, el('div', { class: 'row' }, [el('button', { text: 'とじる', onclick: closeModal })]));
+    const busy = async (btn, fn) => { btn.disabled = true; try { await fn(); } catch (e) { toast(e.message); } btn.disabled = false; };
     const draw = () => {
-      tabs.innerHTML = ''; body.innerHTML = '';
-      const all = SUBS.list;
-      [['wait', 'まだ見ていない（' + SUBS.wait + '）'], ['ok', '許可した'], ['no', '見送った'], ['all', 'ぜんぶ（' + all.length + '）']].forEach(([k, t]) =>
-        tabs.appendChild(el('button', { class: filter === k ? 'on' : '', text: t, onclick: () => { filter = k; draw(); } })));
-      const list = all.filter(s => filter === 'all' || SUB_STATE[s.state] === filter);
+      tools.innerHTML = ''; tabs.innerHTML = ''; body.innerHTML = '';
+      // 道具：受けつけを休む・まとめて見送り・安全チェック
+      const pause = el('button', { class: SUBS.paused ? 'warn' : '', text: SUBS.paused ? '▶ 受けつけを再開する（今は休み中）' : '⏸ 受けつけを休む', onclick: () => busy(pause, async () => {
+        SUBS.paused = await call('portalSubPause', CODE, !SUBS.paused); toast(SUBS.paused ? '申請の受けつけを休みにしました' : '申請の受けつけを再開しました'); draw();
+      }) });
+      const all = el('button', { text: '🗑️ 未確認をまとめて見送り', disabled: SUBS.wait ? null : '', onclick: () => {
+        if (!confirm('まだ見ていない申請 ' + SUBS.wait + ' 件を、まとめて見送りにしますか？（いたずらの申請がたくさん来たとき用。連絡先も消します）')) return;
+        busy(all, async () => { const n = await call('portalRejectAll', CODE, 'まとめて見送り'); SUBS = await call('portalSubmissions', CODE); updateSubDot(); toast(n + ' 件を見送りました'); draw(); });
+      } });
+      tools.append(pause, all, el('button', { text: '🛡️ 安全チェック', onclick: openSecurity }));
+      const flags = SUBS.links ? SUBS.links.flags || 0 : 0;
+      [['wait', 'まだ見ていない（' + SUBS.wait + '）'], ['ok', '許可した'], ['no', '見送った'], ['all', 'ぜんぶ（' + SUBS.list.length + '）'], ['links', '🔍 掲載中の見まわり' + (flags ? '（' + flags + '）' : '')]].forEach(([k, t]) =>
+        tabs.appendChild(el('button', { class: (filter === k ? 'on' : '') + (k === 'links' && flags ? ' flag' : ''), text: t, onclick: () => { filter = k; draw(); } })));
+      if (filter === 'links') { body.appendChild(linksView(draw)); return; }
+      const list = SUBS.list.filter(s => filter === 'all' || SUB_STATE[s.state] === filter);
       if (!list.length) body.appendChild(el('p', { class: 'empty-msg', text: filter === 'wait' ? 'まだ見ていない申請はありません' : 'ありません' }));
       list.forEach(s => body.appendChild(subCard(s, draw)));
     };
@@ -1038,6 +1096,106 @@ function openSubs(filter) {
     refresh();
   });
 }
+// 🔍 掲載中のみんなのゲームの見まわり（行き先・題名が変わった／開けない を知らせる）
+function linksView(redraw) {
+  const L = SUBS.links || { at: 0, list: [] };
+  const wrap = el('div', {});
+  const run = el('button', { class: 'btn go', text: '🔍 今すぐ見まわる', onclick: async () => {
+    run.disabled = true; run.textContent = '見まわっています…（少しかかります）';
+    try { SUBS.links = await call('portalCheckLinks', CODE); updateSubDot(); redraw(); }
+    catch (e) { toast(e.message); run.disabled = false; run.textContent = '🔍 今すぐ見まわる'; }
+  } });
+  wrap.append(
+    el('p', { class: 'hint', text: '載せているゲームのページを開いて、許可したときから「行き先のサイト」や「ページの題名」が変わっていないか、開けなくなっていないかを確かめます。1週間ごとに、管理者になったときに自動でも見まわります。' +
+      (L.at ? '（前の見まわり：' + new Date(L.at).toLocaleString('ja-JP') + '）' : '（まだ見まわっていません）') }),
+    el('div', { class: 'row', style: 'margin-top:8px' }, [run])
+  );
+  const list = (L.list || []).slice().sort((a, b) => (a.state === 'ok') - (b.state === 'ok'));
+  if (L.at && !list.length) wrap.appendChild(el('p', { class: 'empty-msg', text: '載せているみんなのゲームはありません' }));
+  list.forEach(x => {
+    const it = (DATA.items || []).find(i => i.id === x.id);
+    const label = { ok: '✅ だいじょうぶ', changed: '⚠️ 変わりました', error: '❌ 開けません' }[x.state] || x.state;
+    const c = el('div', { class: 'subm ' + (x.state === 'ok' ? '' : 'wait') }, [
+      el('h4', { text: x.title }),
+      el('p', { class: 'kv' }, [el('span', { class: 'st ' + (x.state === 'ok' ? 'ok' : 'no'), text: label }), ' 作：' + (x.author || '')]),
+      x.note ? el('p', { class: 'kv', text: x.note }) : null,
+      el('p', { class: 'kv' }, [el('span', { text: 'URL：' }), safeUrl(x.url) ? el('a', { href: x.url, target: '_blank', rel: 'noopener noreferrer', text: x.url }) : ''])
+    ]);
+    if (x.state !== 'ok') {
+      const okBtn = el('button', { class: 'ok-btn', text: '👍 開いて確かめた・このままでOK', onclick: async () => {
+        okBtn.disabled = true;
+        try { SUBS.links = await call('portalAcceptLink', CODE, x.id); updateSubDot(); toast('このままでOKにしました'); redraw(); }
+        catch (e) { toast(e.message); okBtn.disabled = false; }
+      } });
+      c.append(
+        el('p', { class: 'hint', text: 'ページを開いて（シークレットウィンドウがおすすめ）、決まりに合っているか確かめてください。合わなければ 🗑️ で消してください。' }),
+        el('div', { class: 'row' }, [okBtn, it ? el('button', { text: '🗑️ 消す', onclick: async () => { await remove(it); SUBS.links = await call('portalCheckLinks', CODE).catch(() => SUBS.links); updateSubDot(); redraw(); } }) : null]));
+    }
+    wrap.appendChild(c);
+  });
+  return wrap;
+}
+
+// 🛡️ 安全チェック：データのスプレッドシートをだれが見られるか・リンクで開けてしまわないか・管理者コードの強さ
+function openSecurity() {
+  openModal(box => {
+    box.classList.add('wide');
+    const body = el('div', {}, [el('div', { class: 'loading', text: '確かめています…' })]);
+    box.append(el('h3', { text: '🛡️ 安全チェック' }), body,
+      el('div', { class: 'row' }, [el('button', { text: '📮 申請にもどる', onclick: () => openSubs('wait') }), el('button', { text: 'とじる', onclick: closeModal })]));
+    call('portalSecurityCheck', CODE).then(r => {
+      body.innerHTML = '';
+      const line = (ok, title, text) => el('div', { class: 'subm ' + (ok ? '' : 'wait') }, [
+        el('p', { class: 'kv' }, [el('span', { class: 'st ' + (ok ? 'ok' : 'no'), text: ok ? '✅ だいじょうぶ' : '⚠️ 直してください' }), ' ', el('b', { text: title })]),
+        el('p', { class: 'kv', text: text })]);
+      body.append(
+        line(r.linkOpen === false, 'スプレッドシートのリンク共有',
+          r.linkOpen === false ? 'サインインしていない人は開けません（「リンクを知っている全員」になっていません）。'
+          : r.linkOpen ? 'リンクを知っているだれでも開ける状態です。連絡先が見られてしまうので、スプレッドシートの右上「共有」→「一般的なアクセス」を「制限付き」にしてください。'
+          : '確かめられませんでした。スプレッドシートの右上「共有」→「一般的なアクセス」が「制限付き」になっているか見てください。'),
+        line(r.editors.length <= 1 && !r.viewers.length, '共有している人',
+          '編集できる人：' + (r.editors.join('、') || '（あなただけ）') + '\n見られる人：' + (r.viewers.join('、') || '（いません）') +
+          (r.editors.length > 1 || r.viewers.length ? '\n知らない人がいたら、スプレッドシートの「共有」から外してください。' : '')),
+        line(r.strongCode, '管理者コード', r.strongCode ? '長い管理者コードになっています。いたずらでまちがえられても、正しいコードなら入れます。'
+          : '今のコードは短いので、当てずっぽうを防ぐために、8回まちがえられると10分入れなくなります。12文字以上（英字と数字をまぜる）のコードに変えると、そうならなくなります。'),
+        el('div', { class: 'row' }, [
+          el('a', { class: 'btn', href: r.sheetUrl, target: '_blank', rel: 'noopener', text: '📄 スプレッドシートを開く', style: 'text-align:center;text-decoration:none' }),
+          el('button', { class: r.strongCode ? '' : 'go', text: '🔑 管理者コードを変える', onclick: openChangeCode })
+        ])
+      );
+      body.querySelectorAll('.kv').forEach(p => { p.style.whiteSpace = 'pre-wrap'; });
+    }).catch(e => { body.innerHTML = ''; body.appendChild(el('div', { class: 'err', text: e.message })); });
+  });
+}
+
+// 🔑 管理者コードを変える（新しいコードはサーバーにハッシュだけ残る）
+function openChangeCode() {
+  openModal(box => {
+    const a = el('input', { type: 'password', autocomplete: 'new-password', id: 'newCode1' });
+    const b = el('input', { type: 'password', autocomplete: 'new-password', id: 'newCode2' });
+    const err = el('div', { class: 'err' });
+    const go = el('button', { class: 'go', text: '変える', onclick: async () => {
+      err.textContent = '';
+      const v = a.value.trim();
+      if (v.length < 12) return (err.textContent = '12文字以上にしてください');
+      if (!/[A-Za-z]/.test(v) || !/\d/.test(v)) return (err.textContent = '英字と数字をまぜてください');
+      if (v !== b.value.trim()) return (err.textContent = '2つの入力が同じではありません');
+      go.disabled = true;
+      try {
+        await call('portalChangeCode', CODE, v);
+        CODE = v;
+        try { sessionStorage.setItem('portal_code', CODE); } catch (e) {}
+        toast('管理者コードを変えました'); openSecurity();
+      } catch (e) { err.textContent = e.message; go.disabled = false; }
+    } });
+    box.append(el('h3', { text: '🔑 管理者コードを変える' }),
+      el('p', { class: 'hint', text: '12文字以上で、英字と数字をまぜてください。変えたあとは、前のコードは使えなくなります。忘れないように、パスワードを保存するアプリなどに残してください（チャットや記事には書かないでください）。' }),
+      el('label', { text: '新しい管理者コード' }), a, el('label', { text: 'もう一度' }), b, err,
+      el('div', { class: 'row' }, [el('button', { text: 'やめる', onclick: openSecurity }), go]));
+    setTimeout(() => a.focus(), 50);
+  });
+}
+
 function subCard(s, redraw) {
   const st = SUB_STATE[s.state] || 'wait';
   const kv = (k, v) => el('p', { class: 'kv' }, [el('span', { text: k + '：' }), v]);
