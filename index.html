@@ -175,9 +175,17 @@ const safeUrl = u => /^https?:\/\//i.test(String(u || '')) ? String(u) : '';
 const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
 
 async function call(fn, ...args) {
-  const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args }) });
-  const j = await res.json();
-  if (!j.ok) throw new Error(j.error || 'うまくいきませんでした');
+  // GAS は目ざめるのに時間がかかることがあるので 30秒まで待つ
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 30000);
+  let j;
+  try {
+    const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args }), signal: ctl.signal });
+    j = await res.json();
+  } catch (e) {
+    throw new Error(e.name === 'AbortError' ? 'サーバーから返事がありません' : 'サーバーにつながりません');
+  } finally { clearTimeout(timer); }
+  if (!j.ok) throw new Error(j.error === '呼べない名前です' ? 'サーバー（GAS）がまだ新しい版になっていません' : (j.error || 'うまくいきませんでした'));
   return j.r;
 }
 
@@ -198,7 +206,11 @@ async function load(fresh) {
     render();
     setupAds();
   } catch (e) {
-    if (!DATA.at) $('main').innerHTML = '<div class="empty-msg">よみこめませんでした。しばらくしてから開きなおしてください。</div>';
+    if (!DATA.at) {
+      $('main').innerHTML = '';
+      $('main').appendChild(el('div', { class: 'empty-msg' }, ['よみこめませんでした（' + e.message + '）', el('br'),
+        el('button', { class: 'btn go', style: 'margin-top:12px;max-width:200px', text: 'もう一度', onclick: () => { $('main').innerHTML = '<div class="loading">🌱 よみこみ中…</div>'; load(true); } })]));
+    }
   }
 }
 
