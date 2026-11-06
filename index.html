@@ -3,20 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ハムチーズの作品集</title>
-<meta name="description" content="ゲーム・note の記事・TikTok の動画をまとめています">
-<meta property="og:title" content="ハムチーズの作品集">
-<meta property="og:description" content="ゲーム・note の記事・TikTok の動画をまとめています">
+<title>ハムチーズのゲームセンター</title>
+<meta name="description" content="ハムチーズの作ったゲームと、みんなが作ったゲームで遊べるゲームセンター。あなたのゲームも申請して載せられます。">
+<meta property="og:title" content="ハムチーズのゲームセンター">
+<meta property="og:description" content="ハムチーズの作ったゲームと、みんなが作ったゲームで遊べるゲームセンター。あなたのゲームも申請して載せられます。">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://hamcheese-jp.github.io/">
+<meta property="og:site_name" content="ハムチーズのゲームセンター">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://hamcheese-jp.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ハムチーズのゲームセンター">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ハムチーズのゲームセンター">
+<meta name="twitter:image" content="https://hamcheese-jp.github.io/og.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#fff7ec">
+<!-- ロゴの文字だけ読む（M PLUS Rounded 1c の「ハムチーズのゲームセンター」の字だけ） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&text=%E3%83%8F%E3%83%A0%E3%83%81%E3%83%BC%E3%82%BA%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC&display=swap">
 <style>
 :root {
   --bg: #fff7ec; --bg2: #ffeeda; --card: #ffffff; --ink: #3b2f2a; --sub: #8a766b; --line: #f0dcc6;
-  --accent: #ff8a5c; --accent2: #5cb8ff; --green: #58b368; --pr: #e0566b; --shadow: 0 4px 14px rgba(150, 100, 60, .12);
+  --accent: #ff8a5c; --accent2: #2f8fd8; --green: #58b368; --pr: #e0566b; --shadow: 0 4px 14px rgba(150, 100, 60, .12);
+  --logo-sub: #7a5640;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #1f1a17; --bg2: #2a231f; --card: #2e2622; --ink: #f4e9df; --sub: #b9a597; --line: #44372f;
+    --bg: #1f1a17; --bg2: #2a231f; --card: #2e2622; --ink: #f4e9df; --sub: #b9a597; --line: #44372f; --accent2: #6cc0ff; --logo-sub: #f0d9c4;
     --shadow: 0 4px 14px rgba(0, 0, 0, .35);
   }
 }
@@ -24,7 +42,7 @@
 html, body { margin: 0; }
 body {
   background: var(--bg); color: var(--ink);
-  font-family: "Hiragino Maru Gothic ProN", "M PLUS Rounded 1c", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
   line-height: 1.6; -webkit-text-size-adjust: 100%;
 }
 a { color: inherit; }
@@ -212,6 +230,58 @@ textarea { min-height: 70px; resize: vertical; }
 .pick input[type=file] { display: none; }
 .close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); font-size: 20px; cursor: pointer; }
 
+/* ロゴ（横長。スマホの横はばに合わせて小さくなる） */
+.logo { display: block; width: min(520px, 100%); height: auto; margin: 0 auto; }
+.logo text { font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Yu Gothic", sans-serif; font-weight: 800; }
+.logo .sub { fill: var(--logo-sub); }
+h1.logo-h { margin: 0; line-height: 0; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* 「あなたのゲームを載せませんか？」 */
+.cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; border: 0; padding: 11px 20px; border-radius: 999px; font: inherit; font-size: 15px; font-weight: bold; cursor: pointer; color: #fff;
+  background: linear-gradient(135deg, #5cb8ff, #8f7bff); box-shadow: var(--shadow); }
+.cta-box { margin-top: 14px; padding: 16px; border-radius: 16px; background: var(--card); box-shadow: var(--shadow); text-align: center; }
+.cta-box p { margin: 0; font-size: 13px; color: var(--sub); }
+.cta-box .cta { margin-top: 10px; }
+.note-line { font-size: 12px; color: var(--sub); margin: 8px 2px 0; }
+
+/* みんなのゲーム：作者 */
+.author { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; font-size: 12px; font-weight: bold; color: var(--accent2); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.author.plain { color: var(--sub); text-decoration: none; cursor: default; }
+.badge.cm { background: #8f7bff; }
+
+/* 申請フォーム・決まり */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.req { color: var(--pr); }
+.rules h4 { margin: 14px 0 6px; font-size: 14px; }
+.rules ul { margin: 0; padding-left: 1.3em; font-size: 14px; }
+.rules li { margin: 3px 0; }
+.linkish { border: 0; background: none; padding: 0; color: var(--accent2); font: inherit; text-decoration: underline; cursor: pointer; }
+.done { text-align: center; padding: 10px 0; }
+.done .big { font-size: 46px; }
+
+/* 管理者：申請の一覧 */
+.abar .dot { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 4px; border-radius: 999px; background: var(--pr); color: #fff; font-size: 11px; line-height: 18px; text-align: center; }
+.sub-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.sub-tabs button { border: 0; padding: 6px 12px; border-radius: 999px; background: var(--bg2); color: var(--ink); font: inherit; font-size: 13px; font-weight: bold; cursor: pointer; }
+.sub-tabs button.on { background: var(--accent); color: #fff; }
+.subm { border: 2px solid var(--line); border-radius: 14px; padding: 12px; margin-bottom: 10px; }
+.subm.wait { border-color: var(--accent); }
+.subm img { width: 100%; aspect-ratio: 1200 / 630; object-fit: cover; border-radius: 10px; background: var(--bg2); display: block; margin-bottom: 8px; }
+.subm h4 { margin: 0 0 4px; font-size: 15px; word-break: break-all; }
+.subm .kv { font-size: 13px; margin: 2px 0; word-break: break-all; }
+.subm .kv span { color: var(--sub); }
+.subm .st { display: inline-block; font-size: 11px; font-weight: bold; padding: 1px 8px; border-radius: 6px; color: #fff; background: var(--sub); }
+.subm .st.wait { background: var(--accent); } .subm .st.ok { background: var(--green); } .subm .st.no { background: var(--pr); }
+.subm .row { margin-top: 10px; }
+.subm .row button { padding: 9px 6px; font-size: 13px; }
+.subm .ok-btn { background: var(--green); color: #fff; }
+
+/* 管理者のバー：スマホでははみ出さないように横にすべらせる */
+.abar { overflow-x: auto; scrollbar-width: none; }
+.abar::-webkit-scrollbar { display: none; }
+@media (max-width: 420px) { .abar { gap: 4px; padding: 5px; } .abar button { padding: 8px 7px; font-size: 12px; } }
+
 .toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); z-index: 40; background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 13px; box-shadow: var(--shadow); }
 .toast[hidden] { display: none; }
 .loading { text-align: center; color: var(--sub); padding: 60px 0; }
@@ -237,15 +307,35 @@ textarea { min-height: 70px; resize: vertical; }
 const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '/portal-api'
   : 'https://script.google.com/macros/s/AKfycbyxp1bGOGkzylwYM7Zwd9NS0U9W_OWvCkGL0ZzGxSKAhx8a20NgFvGe0qSLfSgX6jqQsw/exec';
 
+const SITE_NAME = 'ハムチーズのゲームセンター';
+// community：みんなのゲーム（ほかの人の作品。申請 → 管理者が許可 → ここに出る）。自分の作品（ゲーム・動画・note）より後ろ
 const KINDS = {
-  game:    { tab: '🎮 ゲーム',   head: '🎮 ゲーム',        ph: '🎮' },
-  video:   { tab: '🎬 動画',     head: '🎬 動画',          ph: '🎬' },
-  note:    { tab: '📝 note',     head: '📝 note の記事',   ph: '📝' },
-  pr:      { tab: '🛍️ おすすめ', head: '🛍️ おすすめ（PR）', ph: '🛍️' },
-  support: { tab: '💝 応援',     head: '💝 応援する',      ph: '💝' },
-  other:   { tab: '🔗 そのほか', head: '🔗 そのほか',      ph: '🔗' }
+  game:      { tab: '🎮 ハムチーズのゲーム', head: '🎮 ハムチーズのゲーム', ph: '🎮' },
+  video:     { tab: '🎬 動画',     head: '🎬 動画',          ph: '🎬' },
+  note:      { tab: '📝 note',     head: '📝 note の記事',   ph: '📝' },
+  community: { tab: '🕹️ みんなのゲーム', head: '🕹️ みんなのゲーム', ph: '🕹️' },
+  pr:        { tab: '🛍️ おすすめ', head: '🛍️ おすすめ（PR）', ph: '🛍️' },
+  support:   { tab: '💝 ハムチーズを応援', head: '💝 ハムチーズを応援する', ph: '💝' },
+  other:     { tab: '🔗 そのほか', head: '🔗 そのほか',      ph: '🔗' }
 };
-const ORDER = ['game', 'video', 'note', 'pr', 'support', 'other'];
+const ORDER = ['game', 'video', 'note', 'community', 'pr', 'support', 'other'];
+
+// 横長のロゴ（マーク＋文字）。tools/brand.html と同じ絵
+const LOGO_SVG = '<svg class="logo" viewBox="0 0 520 130" role="img" aria-label="' + SITE_NAME + '">' +
+  '<g transform="translate(0 2) scale(1.0333)">' +
+  '<path d="M44 42 L76 42 L76 32 L52 24 Z" fill="#ffd23f" stroke="#3b2f2a" stroke-width="5" stroke-linejoin="round"/>' +
+  '<circle cx="62" cy="34" r="2.6" fill="#e9a800"/><circle cx="70" cy="37" r="1.8" fill="#e9a800"/>' +
+  '<path d="M30 42 h60 a26 26 0 0 1 26 26 v8 a20 20 0 0 1 -36 12 l-6 -8 h-28 l-6 8 a20 20 0 0 1 -36 -12 v-8 a26 26 0 0 1 26 -26 z" fill="#ff8a5c" stroke="#3b2f2a" stroke-width="5" stroke-linejoin="round"/>' +
+  '<rect x="25" y="52" width="12" height="24" rx="3" fill="#fff"/><rect x="19" y="58" width="24" height="12" rx="3" fill="#fff"/>' +
+  '<circle cx="88" cy="58" r="6.5" fill="#ffd23f" stroke="#3b2f2a" stroke-width="3"/><circle cx="100" cy="69" r="6.5" fill="#5cb8ff" stroke="#3b2f2a" stroke-width="3"/>' +
+  '<circle cx="53" cy="59" r="3.2" fill="#3b2f2a"/><circle cx="67" cy="59" r="3.2" fill="#3b2f2a"/>' +
+  '<path d="M54 66 q6 6 12 0" fill="none" stroke="#3b2f2a" stroke-width="3.4" stroke-linecap="round"/>' +
+  '<circle cx="46" cy="66" r="3" fill="#ff5a7a" opacity=".55"/><circle cx="74" cy="66" r="3" fill="#ff5a7a" opacity=".55"/>' +
+  '<path d="M104 14 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#ffd23f" stroke="#3b2f2a" stroke-width="2.5" stroke-linejoin="round"/>' +
+  '<path d="M14 22 l2 4.5 4.5 2 -4.5 2 -2 4.5 -2 -4.5 -4.5 -2 4.5 -2 z" fill="#5cb8ff"/></g>' +
+  '<text class="sub" x="130" y="52" font-size="27" textLength="160" lengthAdjust="spacingAndGlyphs">ハムチーズの</text>' +
+  '<text x="126" y="110" font-size="54" stroke="#3b2f2a" stroke-width="10" stroke-linejoin="round" paint-order="stroke" textLength="388" lengthAdjust="spacingAndGlyphs">' +
+  '<tspan fill="#ff8a5c">ゲ</tspan><tspan fill="#ffd23f">ー</tspan><tspan fill="#ff7f9c">ム</tspan><tspan fill="#5cb8ff">セ</tspan><tspan fill="#58b368">ン</tspan><tspan fill="#ffb02e">タ</tspan><tspan fill="#ff8a5c">ー</tspan></text></svg>';
 const PER_SECTION = 6;
 
 let DATA = { settings: {}, items: [], notes: [] };
@@ -326,7 +416,9 @@ const TQ = [];
 let tqTimer = 0;
 function track(e, it, tab) {
   if (trackOff()) return;
-  TQ.push({ e, id: (it && it.id) || '', title: (it && it.title) || '', kind: (it && it.kind) || '', tab: tab || TAB });
+  // みんなのゲームは作者名も題名に入れておく（集計で「だれの作品が何回押されたか」がわかるように）
+  const title = it ? (it.kind === 'community' && it.author && it.title ? it.title + '（作：' + it.author + '）' : it.title || '') : '';
+  TQ.push({ e, id: (it && it.id) || '', title, kind: (it && it.kind) || '', tab: tab || TAB });
   clearTimeout(tqTimer);
   tqTimer = setTimeout(() => flushTrack(false), 3000);
 }
@@ -379,18 +471,19 @@ function listOf(kind) {
 // ---------------------------------------------------------------- 画面
 function render() {
   const s = DATA.settings || {};
-  const name = s.name || 'ハムチーズの作品集';
+  const name = SITE_NAME;
   document.title = name;
 
-  // 上のあいさつ
+  // 上：ロゴ・ひとこと・リンク・「あなたのゲームを載せませんか？」
   const head = $('head'); head.innerHTML = '';
-  head.appendChild(safeImg(s.icon) ? el('img', { class: 'icon', src: s.icon, alt: '' }) : el('div', { class: 'icon empty', text: '🌱' }));
-  head.appendChild(el('h1', { text: name }));
-  head.appendChild(el('p', { class: 'bio', text: s.bio || 'ゲーム・note の記事・TikTok の動画をまとめています' }));
+  const h1 = el('h1', { class: 'logo-h' }); h1.innerHTML = LOGO_SVG;
+  head.appendChild(h1);
+  head.appendChild(el('p', { class: 'bio', text: s.bio || 'ハムチーズの作ったゲームと、みんなが作ったゲームで遊べるゲームセンターです' }));
   if ((s.links || []).length) head.appendChild(el('div', { class: 'chips' }, s.links.map(l => el('a', { class: 'chip', href: l.url, target: '_blank', rel: 'noopener', text: l.label, onclick: () => track('link', { id: 'link:' + l.label, title: l.label, kind: 'link' }) }))));
+  head.appendChild(ctaBtn());
 
-  // タブ（中身がある種類だけ）
-  const kinds = ORDER.filter(k => listOf(k).length);
+  // タブ（中身がある種類だけ。みんなのゲームは まだなくても出す：申請してもらうため）
+  const kinds = ORDER.filter(k => k === 'community' || listOf(k).length);
   if (TAB !== 'all' && !kinds.includes(TAB)) TAB = 'all';
   const tabs = $('tabs'); tabs.innerHTML = '';
   [['all', '✨ すべて']].concat(kinds.map(k => [k, KINDS[k].tab])).forEach(([k, label]) => {
@@ -413,8 +506,17 @@ function render() {
       cut ? el('button', { class: 'more', text: 'もっと見る（' + list.length + '）›', onclick: () => setTab(k) }) : null
     ]));
     const shown = cut ? list.slice(0, PER_SECTION) : list;
-    if (k === 'support') sec.appendChild(el('div', { class: 'support' }, shown.map(supportBtn)));
-    else sec.appendChild(el('div', { class: 'grid' + (k === 'video' ? ' video' : '') }, shown.map(card)));
+    if (k === 'support') {
+      sec.appendChild(el('div', { class: 'support' }, shown.map(supportBtn)));
+      sec.appendChild(el('p', { class: 'note-line', text: '※ ここからの応援・寄付は、このページを作っている「ハムチーズ」に届きます。「みんなのゲーム」の作者さんには届きません。' }));
+    } else if (shown.length) sec.appendChild(el('div', { class: 'grid' + (k === 'video' ? ' video' : '') }, shown.map(card)));
+    if (k === 'community') {
+      if (list.length) sec.appendChild(el('p', { class: 'note-line', text: '※ みんなのゲームは、それぞれの作者さんの作品です。遊ぶときは、リンク先のページの決まりにしたがってください。' }));
+      sec.appendChild(el('div', { class: 'cta-box' }, [
+        el('p', { text: list.length ? 'あなたが作ったゲームも、ここに載せられます' : 'まだありません。あなたが作ったゲームを、最初の1本として載せませんか？' }),
+        ctaBtn()
+      ]));
+    }
     main.appendChild(sec);
   }
   if (DATA.poll && TAB === 'all') main.appendChild(pollBox(DATA.poll));
@@ -422,7 +524,9 @@ function render() {
   // 下
   const foot = $('foot'); foot.innerHTML = '';
   if (DATA.items.some(it => it.pr)) foot.appendChild(el('p', { text: '※「PR」がついたリンクは広告（アフィリエイト）です。リンク先で買い物をすると、このページの作者に紹介料が入ることがあります。' }));
-  foot.appendChild(el('p', { class: 'privacy', text: 'よりよい作品づくりのため、このページが見られた回数や押されたリンクを数えています（名前など、個人がわかる情報は集めていません）。' }));
+  foot.appendChild(el('p', { class: 'privacy', text: 'よりよいページづくりのため、このページが見られた回数や押されたリンクを数えています（名前など、個人がわかる情報は集めていません）。' }));
+  foot.appendChild(el('p', { class: 'privacy', text: 'ゲームの申請でいただいた連絡先などの個人情報は、このページには出しません（管理者だけが見ます）。ページに出るのは、ゲームの名前・説明・画像・作者名・作者のSNSだけです。' }));
+  foot.appendChild(el('p', {}, [el('button', { class: 'linkish', text: '📜 ゲームを載せるときの決まり', onclick: () => openRules() })]));
   foot.appendChild(el('p', { text: '© ' + new Date().getFullYear() + ' ' + name }));
   if (!CODE) foot.appendChild(el('button', { class: 'admin-link', title: '管理者', text: '🛠️', onclick: openLogin }));
 
@@ -455,6 +559,7 @@ function card(it) {
     thumb,
     el('div', { class: 'body' }, [
       el('div', { class: 'title', text: it.title }),
+      it.kind === 'community' && it.author ? authorLink(it) : null,
       it.desc ? el('div', { class: 'desc', text: it.desc }) : null,
       el('div', { class: 'meta' }, [[date, host(it.url)].filter(Boolean).join(' ・ '), clickCount(it)])
     ])
@@ -464,6 +569,22 @@ function card(it) {
   if (CODE && !it.auto) c.appendChild(adminTools(it));
   return c;
 }
+
+// みんなのゲームの作者：作者のSNSへ（カード全体がリンクなので、ここは押したら別に開く）
+function authorLink(it) {
+  const url = safeUrl(it.authorUrl);
+  if (!url) return el('span', { class: 'author plain', text: '作：' + it.author });
+  const open = e => {
+    e.preventDefault(); e.stopPropagation();
+    track('link', { id: 'author:' + it.id, title: it.author + '（作者のSNS）', kind: 'community' });
+    window.open(url, '_blank', 'noopener');
+  };
+  return el('span', { class: 'author', role: 'link', tabindex: '0', title: url, text: '作：' + it.author + ' ↗', onclick: open,
+    onkeydown: e => { if (e.key === 'Enter') open(e); } });
+}
+
+// 「🎮 あなたのゲームを載せませんか？」
+function ctaBtn() { return el('button', { class: 'cta', text: '🎮 あなたのゲームを載せませんか？', onclick: () => openSubmit() }); }
 
 function supportBtn(it) {
   const img = safeImg(it.image);
@@ -700,6 +821,122 @@ function imagePicker(initial, opt) {
 }
 $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
 
+// ---------------------------------------------------------------- 🎮 ゲームの申請（だれでも）
+//   申請 → 管理者が見て許可 → 「みんなのゲーム」に出る。1台から1日3件まで（サーバーでも数える）
+const SUB_LIMIT = 3;
+function subCountToday() {
+  try {
+    const d = JSON.parse(localStorage.getItem('portal_subs') || '[]').filter(t => Date.now() - t < DAY);
+    return d;
+  } catch (e) { return []; }
+}
+function openSubmit() {
+  openModal(box => {
+    const f = {
+      title: el('input', { type: 'text', maxlength: '60', autocomplete: 'off' }),
+      url: el('input', { type: 'url', maxlength: '2000', placeholder: 'https://…', autocomplete: 'off' }),
+      desc: el('textarea', { maxlength: '200', placeholder: 'どんなゲームか、ひとことで（200文字まで）' }),
+      imageUrl: el('input', { type: 'url', maxlength: '2000', placeholder: 'https://…（なくてもOK）', autocomplete: 'off' }),
+      author: el('input', { type: 'text', maxlength: '40', autocomplete: 'nickname' }),
+      authorUrl: el('input', { type: 'url', maxlength: '2000', placeholder: 'https://x.com/…', autocomplete: 'off' }),
+      contact: el('input', { type: 'text', maxlength: '120', placeholder: 'メールアドレスなど（なくてもOK）', autocomplete: 'off' }),
+      // ロボットよけ：人には見えない欄。ここに何か入っていたら、ロボットとみなす
+      website: el('input', { type: 'text', name: 'website', tabindex: '-1', autocomplete: 'off', 'aria-hidden': 'true' }),
+      agree: el('input', { type: 'checkbox' })
+    };
+    const pick = imagePicker('');
+    const err = el('div', { class: 'err' });
+    const opened = Date.now();
+    const go = el('button', { class: 'go', text: '📮 申請する', onclick: async () => {
+      err.textContent = '';
+      const http = u => /^https?:\/\/\S+$/i.test(u.trim());
+      if (!f.title.value.trim()) return (err.textContent = 'ゲームの名前を入れてください');
+      if (!http(f.url.value)) return (err.textContent = 'ゲームのURLは http:// か https:// で始まるものを入れてください');
+      if (!f.author.value.trim()) return (err.textContent = '作者名を入れてください');
+      if (f.authorUrl.value.trim() && !http(f.authorUrl.value)) return (err.textContent = '作者のSNSのURLは http:// か https:// で始まるものを入れてください');
+      if (f.imageUrl.value.trim() && !http(f.imageUrl.value)) return (err.textContent = '画像のURLは http:// か https:// で始まるものを入れてください');
+      if (!f.agree.checked) return (err.textContent = '「載せるときの決まり」を読んで、チェックを入れてください');
+      if (subCountToday().length >= SUB_LIMIT) return (err.textContent = '1台から申請できるのは1日' + SUB_LIMIT + '件までです。また明日おねがいします');
+      // 開いてすぐ（2秒以内）の送信はロボットとみなして、受けつけたふりをする
+      const bot = !!f.website.value || Date.now() - opened < 2000;
+      go.disabled = true; go.textContent = '送っています…';
+      try {
+        if (!bot) await call('portalSubmit', VID, {
+          title: f.title.value, url: f.url.value.trim(), desc: f.desc.value, image: pick.get() || f.imageUrl.value.trim(),
+          author: f.author.value, authorUrl: f.authorUrl.value.trim(), contact: f.contact.value, agree: true, website: f.website.value
+        });
+        try { localStorage.setItem('portal_subs', JSON.stringify(subCountToday().concat(Date.now()))); } catch (e) {}
+        box.innerHTML = '';
+        box.append(el('div', { class: 'done' }, [
+          el('div', { class: 'big', text: '📮' }),
+          el('h3', { text: '申請を受けつけました！' }),
+          el('p', { class: 'hint', text: 'すぐには載りません。管理者が中身を確かめてから「🕹️ みんなのゲーム」に載せます。決まりに合わないときは載せないことがあります。' })
+        ]), el('div', { class: 'row' }, [el('button', { class: 'go', text: 'とじる', onclick: closeModal })]));
+      } catch (e) { err.textContent = e.message; go.disabled = false; go.textContent = '📮 申請する'; }
+    } });
+    const req = t => el('label', {}, [t, el('span', { class: 'req', text: ' *' })]);
+    box.append(
+      el('h3', { text: '🎮 あなたのゲームを載せませんか？' }),
+      el('p', { class: 'hint', text: 'あなたが作ったゲームを「🕹️ みんなのゲーム」に載せられます。申請のあと、管理者が確かめてから載せます（すぐには載りません）。* は必ず入れてください。' }),
+      req('ゲームの名前'), f.title,
+      req('ゲームのURL'), f.url,
+      el('label', { text: 'ひとこと説明' }), f.desc,
+      el('label', { text: '画像（URL か 写真）' }), f.imageUrl, pick.el,
+      req('作者名（ページに出ます）'), f.author,
+      el('label', { text: '作者のSNSのURL（ページに出ます・なくてもOK）' }), f.authorUrl,
+      el('label', { text: '連絡先（管理者だけが見ます・ページには出しません）' }), f.contact,
+      el('div', { class: 'hp' }, [el('label', { text: 'ここは空のままにしてください' }), f.website]),
+      el('label', { class: 'check', style: 'margin-top:14px' }, [f.agree, el('span', {}, [
+        el('button', { class: 'linkish', text: '載せるときの決まり', onclick: e => { e.preventDefault(); openRules(true); } }), ' を読んで、同意します'
+      ])]),
+      err,
+      el('div', { class: 'row' }, [el('button', { text: 'やめる', onclick: closeModal }), go])
+    );
+    setTimeout(() => f.title.focus(), 50);
+  });
+}
+
+// 📜 載せるときの決まり。fromForm：フォームの上に重ねて開く（とじたらフォームにもどる）
+function openRules(fromForm) {
+  const html = el('div', { class: 'rules' }, [
+    el('p', { class: 'hint', text: '「🕹️ みんなのゲーム」は、ゲームを作った人が自分の作品を紹介できる場所です。見る人が安心して遊べるように、次の決まりがあります。' }),
+    el('h4', { text: '🙆 載せられるもの' }),
+    el('ul', {}, ['自分（または自分たち）が作ったゲーム', 'ブラウザで遊べるページや、ストアのページなど、だれでも開けるURL', 'だれでも安心して遊べる内容のもの'].map(t => el('li', { text: t }))),
+    el('h4', { text: '🙅 載せられないもの' }),
+    el('ul', {}, [
+      'だましのページ（ログインやお金の情報を入れさせる、うそのボタンで別のページへ飛ばす など）',
+      'ウイルス・あやしいファイルをダウンロードさせるもの',
+      '人の作品の丸写し・勝手に使った絵や音楽・キャラクター',
+      '大人向けの内容（はだか・ひどい暴力 など）',
+      'ほかの人の悪口・差別・いやがらせ',
+      '法律や、ほかのサービスの決まりに反するもの',
+      '広告ばかりのページ・ゲームではないページ'
+    ].map(t => el('li', { text: t }))),
+    el('h4', { text: '📮 申請について' }),
+    el('ul', {}, [
+      '申請しても、すぐには載りません。管理者が中身を確かめてから載せます。',
+      '載せるかどうかは管理者が決めます。理由をお知らせしないで見送ることがあります。',
+      '載せたあとでも、決まりに合わないとわかったときや、作者さんから頼まれたときは消すことがあります。',
+      '題名・説明・画像は、見やすいように管理者が直すことがあります。',
+      'ページに出るのは、ゲームの名前・説明・画像・作者名・作者のSNSだけです。連絡先は管理者だけが見て、ページには出しません。',
+      '1台から申請できるのは1日3件までです。',
+      'ページの「応援・寄付」は、このページを作っている「ハムチーズ」へのものです。みんなのゲームの作者さんには届きません。',
+      '載せたゲームで起きたことの責任は、それぞれの作者さんにあります。'
+    ].map(t => el('li', { text: t }))),
+    el('p', { class: 'hint', text: '消してほしいときや、気になるゲームを見つけたときは、ページの上のリンク（X など）から管理者に知らせてください。' })
+  ]);
+  if (fromForm) {
+    // フォームの入力を消さないように、フォームはそのままにして上に重ねる
+    const m = el('div', { class: 'modal', style: 'z-index:35' }, [el('div', { class: 'box' }, [el('h3', { text: '📜 ゲームを載せるときの決まり' }), html,
+      el('div', { class: 'row' }, [el('button', { class: 'go', text: 'わかった', onclick: () => m.remove() })])])]);
+    m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+    document.body.appendChild(m);
+    return;
+  }
+  openModal(box => box.append(el('h3', { text: '📜 ゲームを載せるときの決まり' }), html,
+    el('div', { class: 'row' }, [el('button', { text: 'とじる', onclick: closeModal }), el('button', { class: 'go', text: '🎮 申請する', onclick: () => openSubmit() })])));
+}
+
 function openLogin() {
   openModal(box => {
     const inp = el('input', { type: 'password', autocomplete: 'off', inputmode: 'numeric' });
@@ -710,7 +947,7 @@ function openLogin() {
         await call('portalCheckCode', inp.value);
         CODE = inp.value;
         try { localStorage.setItem('portal_notrack', '1'); } catch (e) {}
-        loadStats30();
+        loadStats30(); loadSubs();
         try { sessionStorage.setItem('portal_code', CODE); } catch (e) {}
         closeModal(); render(); toast('管理者になりました');
       } catch (e) { err.textContent = e.message; go.disabled = false; }
@@ -726,15 +963,91 @@ function renderAdminBar() {
   let bar = document.querySelector('.abar');
   document.body.classList.toggle('admin', !!CODE);
   if (!CODE) { if (bar) bar.remove(); return; }
-  if (bar) return;
+  if (bar) { updateSubDot(); return; }
   bar = el('div', { class: 'abar' }, [
     el('button', { class: 'main', text: '＋ 追加', onclick: () => openEditor(null) }),
+    el('button', { id: 'subBtn', title: '申請', onclick: () => openSubs('wait') }, ['📮 申請', el('span', { class: 'dot', id: 'subDot', hidden: '' })]),
     el('button', { text: '📊 集計', onclick: () => openStats(30) }),
     el('button', { text: '⚙️ 設定', onclick: openSettings }),
     el('button', { text: '🔄', title: '読みなおす', onclick: () => load(true).then(() => toast('読みなおしました')) }),
-    el('button', { text: '🚪', title: '管理者をやめる', onclick: () => { CODE = ''; STATS30 = null; try { sessionStorage.removeItem('portal_code'); } catch (e) {} render(); } })
+    el('button', { text: '🚪', title: '管理者をやめる', onclick: () => { CODE = ''; STATS30 = null; SUBS = null; try { sessionStorage.removeItem('portal_code'); } catch (e) {} render(); } })
   ]);
   document.body.appendChild(bar);
+  updateSubDot();
+}
+
+// ---------------------------------------------------------------- 📮 申請（管理者）
+let SUBS = null; // { list, wait }
+async function loadSubs() {
+  try { SUBS = await call('portalSubmissions', CODE); updateSubDot(); } catch (e) {}
+}
+function updateSubDot() {
+  const d = $('subDot');
+  if (!d) return;
+  const n = SUBS ? SUBS.wait : 0;
+  d.hidden = !n; d.textContent = n;
+  $('subBtn').title = n ? 'まだ見ていない申請が ' + n + ' 件' : '申請';
+}
+const SUB_STATE = { '未確認': 'wait', '許可': 'ok', '見送り': 'no' };
+function openSubs(filter) {
+  openModal(box => {
+    box.classList.add('wide');
+    box.appendChild(el('h3', { text: '📮 ゲームの申請' }));
+    const tabs = el('div', { class: 'sub-tabs' });
+    const body = el('div', {}, [el('div', { class: 'loading', text: '読みこみ中…' })]);
+    box.append(tabs, body, el('div', { class: 'row' }, [el('button', { text: 'とじる', onclick: closeModal })]));
+    const draw = () => {
+      tabs.innerHTML = ''; body.innerHTML = '';
+      const all = SUBS.list;
+      [['wait', 'まだ見ていない（' + SUBS.wait + '）'], ['ok', '許可した'], ['no', '見送った'], ['all', 'ぜんぶ（' + all.length + '）']].forEach(([k, t]) =>
+        tabs.appendChild(el('button', { class: filter === k ? 'on' : '', text: t, onclick: () => { filter = k; draw(); } })));
+      const list = all.filter(s => filter === 'all' || SUB_STATE[s.state] === filter);
+      if (!list.length) body.appendChild(el('p', { class: 'empty-msg', text: filter === 'wait' ? 'まだ見ていない申請はありません' : 'ありません' }));
+      list.forEach(s => body.appendChild(subCard(s, draw)));
+    };
+    const refresh = () => call('portalSubmissions', CODE).then(r => { SUBS = r; updateSubDot(); draw(); })
+      .catch(e => { body.innerHTML = ''; body.appendChild(el('div', { class: 'err', text: e.message })); });
+    if (SUBS) draw();
+    refresh();
+  });
+}
+function subCard(s, redraw) {
+  const st = SUB_STATE[s.state] || 'wait';
+  const kv = (k, v) => el('p', { class: 'kv' }, [el('span', { text: k + '：' }), v]);
+  const link = u => safeUrl(u) ? el('a', { href: u, target: '_blank', rel: 'noopener noreferrer', text: u }) : '（なし）';
+  const img = safeImg(s.image);
+  const err = el('div', { class: 'err' });
+  const c = el('div', { class: 'subm ' + st }, [
+    img ? el('img', { src: img, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer' }) : null,
+    el('h4', { text: s.title }),
+    el('p', { class: 'kv' }, [el('span', { class: 'st ' + st, text: s.state }), ' ' + new Date(s.at).toLocaleString('ja-JP')]),
+    kv('URL', link(s.url)),
+    s.desc ? kv('説明', s.desc) : null,
+    kv('作者', s.author),
+    kv('作者のSNS', link(s.authorUrl)),
+    kv('連絡先（ページには出しません）', s.contact || '（なし）'),
+    s.memo ? kv('メモ', s.memo) : null,
+    err
+  ]);
+  const done = async (p, msg) => {
+    c.querySelectorAll('button').forEach(b => { b.disabled = true; });
+    err.textContent = '';
+    try { await p(); SUBS = await call('portalSubmissions', CODE); updateSubDot(); toast(msg); redraw(); if (msg !== '見送りました') load(true); }
+    catch (e) { err.textContent = e.message; c.querySelectorAll('button').forEach(b => { b.disabled = false; }); }
+  };
+  if (st !== 'ok') {
+    c.appendChild(el('div', { class: 'row' }, [
+      el('button', { class: 'ok-btn', text: '✅ 許可', onclick: () => {
+        if (confirm('「' + s.title + '」を「みんなのゲーム」に載せますか？')) done(() => call('portalApprove', CODE, s.id), '載せました');
+      } }),
+      el('button', { text: '✏️ 直して許可', onclick: () => openEditor(null, s) }),
+      st === 'wait' ? el('button', { text: '❌ 見送り', onclick: () => {
+        const memo = prompt('見送る理由のメモ（管理者だけが見ます。なくてもOK）', '');
+        if (memo !== null) done(() => call('portalReject', CODE, s.id, memo), '見送りました');
+      } }) : null
+    ]));
+  }
+  return c;
 }
 
 function adminTools(it) {
@@ -765,22 +1078,34 @@ async function remove(it) {
 }
 
 // 追加・直す画面。URL を貼って「読みこむ」→ 題名・画像が入る → 直して「登録」
-function openEditor(it) {
+// sub：申請（📮 の「✏️ 直して許可」）。そのときは申請の中身を入れて、保存で許可する
+function openEditor(it, sub) {
+  if (sub) it = { url: sub.url, kind: 'community', title: sub.title, desc: sub.desc, image: sub.image, author: sub.author, authorUrl: sub.authorUrl, pr: false, vid: '' };
+  const isNewItem = !it || !!sub;
   openModal(box => {
     const f = {
       url: el('input', { type: 'url', placeholder: 'https://…', value: it ? it.url : '' }),
       kind: el('select', {}, ORDER.map(k => el('option', { value: k, text: KINDS[k].tab }))),
       title: el('input', { type: 'text', value: it ? it.title : '' }),
       desc: el('textarea', {}, it ? [it.desc] : []),
+      author: el('input', { type: 'text', maxlength: '40', value: it ? it.author || '' : '' }),
+      authorUrl: el('input', { type: 'url', placeholder: 'https://x.com/…', value: it ? it.authorUrl || '' : '' }),
       pr: el('input', { type: 'checkbox' })
     };
     let vid = it ? it.vid : '';
     f.kind.value = it ? it.kind : 'game';
+    if (sub) f.kind.disabled = true;
     f.pr.checked = it ? !!it.pr : false;
     const pick = imagePicker(it ? it.image : '');
     const shapeOf = k => k === 'video' ? 'r34' : k === 'support' ? 'r11' : 'wide';
     pick.setShape(shapeOf(f.kind.value));
-    f.kind.addEventListener('change', () => { if (f.kind.value === 'pr') f.pr.checked = true; pick.setShape(shapeOf(f.kind.value)); });
+    const authorBox = el('div', {}, [
+      el('label', { text: '作者名（みんなのゲーム）' }), f.author,
+      el('label', { text: '作者のSNSのURL（なくてもOK）' }), f.authorUrl
+    ]);
+    const showAuthor = () => { authorBox.hidden = f.kind.value !== 'community'; };
+    f.kind.addEventListener('change', () => { if (f.kind.value === 'pr') f.pr.checked = true; pick.setShape(shapeOf(f.kind.value)); showAuthor(); });
+    showAuthor();
     const err = el('div', { class: 'err' });
     const detail = el('div', { hidden: it ? null : '' });
 
@@ -798,37 +1123,45 @@ function openEditor(it) {
       detail.hidden = false; read.disabled = false; read.textContent = '🔍 もう一度読みこむ';
     } });
 
-    const save = el('button', { class: 'go', text: it ? '直す' : '登録する', onclick: async () => {
+    const save = el('button', { class: 'go', text: sub ? '✅ この中身で許可' : it ? '直す' : '登録する', onclick: async () => {
       save.disabled = true; err.textContent = '';
-      const item = { url: f.url.value, kind: f.kind.value, title: f.title.value, desc: f.desc.value, image: pick.get(), pr: f.pr.checked, vid };
+      const item = { url: f.url.value, kind: f.kind.value, title: f.title.value, desc: f.desc.value, image: pick.get(), pr: f.pr.checked, vid,
+        author: f.author.value, authorUrl: f.authorUrl.value };
       try {
-        if (it) await call('portalUpdate', CODE, it.id, item); else await call('portalAdd', CODE, item);
-        closeModal(); await load(true); toast(it ? '直しました' : '登録しました');
+        if (sub) {
+          await call('portalApprove', CODE, sub.id, item);
+          SUBS = await call('portalSubmissions', CODE); updateSubDot();
+          load(true); toast('直して載せました'); openSubs('wait');
+          return;
+        }
+        if (!isNewItem) await call('portalUpdate', CODE, it.id, item); else await call('portalAdd', CODE, item);
+        closeModal(); await load(true); toast(!isNewItem ? '直しました' : '登録しました');
       } catch (e) { err.textContent = e.message; save.disabled = false; }
     } });
 
     detail.append(
       el('label', { text: '種類' }), f.kind,
       el('label', { text: '題名' }), f.title,
+      authorBox,
       el('label', { text: '説明' }), f.desc,
       el('label', { text: '画像' }), pick.el,
       el('label', { class: 'check' }, [f.pr, '「PR」をつける（広告・アフィリエイトのリンク）']),
       el('p', { class: 'hint', text: 'アフィリエイトのリンクは「PR」をつける決まりがあります（おすすめ はいつも PR がつきます）。' })
     );
     box.append(
-      el('h3', { text: it ? '✏️ 直す' : '＋ URLを貼って追加' }),
+      el('h3', { text: sub ? '✏️ 直して許可（みんなのゲーム）' : it ? '✏️ 直す' : '＋ URLを貼って追加' }),
       el('label', { text: 'URL' }), f.url,
-      el('p', { class: 'hint', text: 'ゲーム・note・TikTok・アフィリエイト・応援のページなど。読みこむと題名と画像が自動で入ります。' }),
-      el('div', { class: 'row' }, [read]),
+      el('p', { class: 'hint', text: sub ? 'URL を開いて、中身を確かめてから載せてください。' : 'ゲーム・note・TikTok・アフィリエイト・応援のページなど。読みこむと題名と画像が自動で入ります。' }),
+      ...(sub ? [] : [el('div', { class: 'row' }, [read])]),
       detail, err,
-      el('div', { class: 'row' }, [el('button', { text: 'やめる', onclick: closeModal }), save])
+      el('div', { class: 'row' }, [el('button', { text: sub ? 'もどる' : 'やめる', onclick: sub ? () => openSubs('wait') : closeModal }), save])
     );
     if (!it) setTimeout(() => f.url.focus(), 50);
   });
 }
 
 // ---------------------------------------------------------------- 📊 集計の画面（管理者だけ）
-const KIND_NAMES = { game: 'ゲーム', video: '動画', note: 'note', pr: 'おすすめ', support: '応援', other: 'そのほか', link: '上のリンク' };
+const KIND_NAMES = { game: 'ゲーム', community: 'みんなのゲーム', video: '動画', note: 'note', pr: 'おすすめ', support: '応援', other: 'そのほか', link: '上のリンク' };
 function openStats(days) {
   openModal(box => {
     box.classList.add('wide');
@@ -865,6 +1198,20 @@ function statsView(b, s) {
         el('td', { text: KIND_NAMES[it.kind] || it.kind }), el('td', { class: 'n', text: it.clicks + it.video }), el('td', { class: 'n', text: it.people }), el('td', { class: 'n', text: it.rate + '%' })]))
     ]));
   }
+  // 🕹️ みんなのゲーム：作者さんに「○回押されました」と伝える用（押されていないものも0回で出す）
+  const cm = DATA.items.filter(it => it.kind === 'community');
+  if (cm.length) {
+    const cnt = id => { const x = s.items.find(i => i.id === id); return x ? x.clicks + x.video : 0; };
+    const sns = id => { const x = s.items.find(i => i.id === 'author:' + id); return x ? x.clicks : 0; };
+    b.appendChild(el('h4', { text: '🕹️ みんなのゲーム（作者さんに伝える用）' }));
+    b.appendChild(el('table', { class: 'rank' }, [
+      el('tr', {}, ['題名', '作者', '押された', 'SNSへ'].map(t => el('th', { text: t }))),
+      ...cm.map(it => [it, cnt(it.id)]).sort((a, c) => c[1] - a[1]).map(([it, n]) => el('tr', {}, [
+        el('td', { class: 't', text: it.title, title: it.title }), el('td', { class: 't', text: it.author || '' }),
+        el('td', { class: 'n', text: n + '回' }), el('td', { class: 'n', text: sns(it.id) + '回' })]))
+    ]));
+    b.appendChild(el('p', { class: 'hint', text: '例：「' + (s.days ? 'この' + s.days + '日で' : 'これまでに') + '、あなたのゲームは ○回 押されました」と作者さんに伝えられます。' }));
+  }
   if (s.kinds.length) b.append(el('h4', { text: '🗂️ 種類ごとのクリック' }), ...hbars(s.kinds, k => KIND_NAMES[k] || k));
   if (s.ref.length) b.append(el('h4', { text: '🚪 どこから来たか' }), ...hbars(s.ref));
   if (s.dev.length) b.append(el('h4', { text: '📱 端末' }), ...hbars(s.dev));
@@ -894,7 +1241,6 @@ function openSettings() {
   const s = DATA.settings || {};
   openModal(box => {
     const f = {
-      name: el('input', { type: 'text', value: s.name || '', placeholder: 'ハムチーズの作品集' }),
       bio: el('textarea', {}, [s.bio || '']),
       noteUser: el('input', { type: 'text', value: s.noteUser || '', placeholder: '例：hamcheese' }),
       links: el('textarea', { placeholder: 'X https://x.com/…\nTikTok https://www.tiktok.com/@…' }, [(s.links || []).map(l => l.label + ' ' + l.url).join('\n')]),
@@ -903,7 +1249,6 @@ function openSettings() {
       pollOpts: el('textarea', { placeholder: 'パズル\nRPG\n育てるゲーム\nアクション' }, [(pollNow.opts || []).join('\n')]),
       pollOn: el('input', { type: 'checkbox' })
     };
-    const icon = imagePicker(s.icon || '', { shape: 'round', square: true });
     f.pollOn.checked = !!pollNow.on;
     const err = el('div', { class: 'err' });
     const save = el('button', { class: 'go', text: '保存', onclick: async () => {
@@ -912,7 +1257,8 @@ function openSettings() {
         const m = l.match(/^(.*?)\s+(https?:\/\/\S+)$/); return m ? { label: m[1], url: m[2] } : null;
       }).filter(Boolean);
       try {
-        await call('portalSaveSettings', CODE, { name: f.name.value, bio: f.bio.value, icon: icon.get(), noteUser: f.noteUser.value, links, adsense: f.adsense.value });
+        // ページの名前とロゴは決まっている（SITE_NAME）。前に入れた名前・アイコンはそのまま残す
+        await call('portalSaveSettings', CODE, { name: s.name || '', bio: f.bio.value, icon: s.icon || '', noteUser: f.noteUser.value, links, adsense: f.adsense.value });
         const pq = f.pollQ.value.trim(), po = f.pollOpts.value.split('\n').map(x => x.trim()).filter(Boolean);
         if (pq || pollNow.q) await call('portalSavePoll', CODE, { q: pq, opts: po, on: f.pollOn.checked });
         closeModal(); await load(true); toast('保存しました');
@@ -920,9 +1266,7 @@ function openSettings() {
     } });
     box.append(
       el('h3', { text: '⚙️ ページの設定' }),
-      el('label', { text: 'ページの名前' }), f.name,
-      el('label', { text: 'ひとこと' }), f.bio,
-      el('label', { text: 'アイコン' }), icon.el,
+      el('label', { text: 'ひとこと（ロゴの下に出ます）' }), f.bio,
       el('label', { text: 'note のユーザー名' }), f.noteUser,
       el('p', { class: 'hint', text: 'note.com/○○ の ○○。入れると、新しい記事が自動で並びます（3時間ごとに読みなおし）。' }),
       el('label', { text: '上に出すリンク（1行に「名前 URL」）' }), f.links,
@@ -940,7 +1284,7 @@ function openSettings() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeVideo(); } });
 if (new URLSearchParams(location.search).has('admin') && !CODE) setTimeout(openLogin, 300);
 track('view', null);
-if (CODE) loadStats30();
+if (CODE) { loadStats30(); loadSubs(); }
 load(false);
 </script>
 </body>
