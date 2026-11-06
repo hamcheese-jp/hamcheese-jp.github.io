@@ -117,7 +117,19 @@ textarea { min-height: 70px; resize: vertical; }
 .err { color: var(--pr); font-size: 13px; margin-top: 8px; white-space: pre-wrap; }
 
 .player { background: #000; border-radius: 16px; overflow: hidden; width: min(360px, 100%); aspect-ratio: 9 / 16; max-height: calc(100vh - 100px); position: relative; }
-.player iframe { width: 100%; height: 100%; border: 0; display: block; }
+.player iframe { width: 100%; height: calc(100% - 36px); border: 0; display: block; }
+.tt-open { display: block; height: 36px; line-height: 36px; text-align: center; color: #fff; font-size: 13px; font-weight: bold; text-decoration: none; background: #111; }
+
+/* 画像をえらぶ */
+.pick { margin-top: 4px; }
+.pick .pv { position: relative; max-height: none; margin-top: 0; aspect-ratio: 1200 / 630; display: flex; align-items: center; justify-content: center; color: var(--sub); font-size: 13px; border: 2px dashed var(--line); }
+.pick .pv.has { border-style: solid; }
+.pick .pv.r34 { aspect-ratio: 9 / 16; max-width: 220px; margin: 0 auto; }
+.pick .pv.r11 { aspect-ratio: 1; max-width: 160px; margin: 0 auto; }
+.pick .pv.round { border-radius: 50%; }
+.pick .pv img { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; object-fit: cover; }
+.pick .row { margin-top: 8px; }
+.pick input[type=file] { display: none; }
 .close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); font-size: 20px; cursor: pointer; }
 
 .toast { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); z-index: 40; background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 13px; box-shadow: var(--shadow); }
@@ -177,6 +189,8 @@ function el(tag, attrs, kids) {
   return e;
 }
 const safeUrl = u => /^https?:\/\//i.test(String(u || '')) ? String(u) : '';
+// 画像：URL か、写真を小さくしたもの（data:image/…）
+const safeImg = u => /^data:image\/(jpeg|png|webp);base64,/i.test(String(u || '')) ? String(u) : safeUrl(u);
 const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
 
 async function call(fn, ...args) {
@@ -235,7 +249,7 @@ function render() {
 
   // 上のあいさつ
   const head = $('head'); head.innerHTML = '';
-  head.appendChild(safeUrl(s.icon) ? el('img', { class: 'icon', src: s.icon, alt: '' }) : el('div', { class: 'icon empty', text: '🌱' }));
+  head.appendChild(safeImg(s.icon) ? el('img', { class: 'icon', src: s.icon, alt: '' }) : el('div', { class: 'icon empty', text: '🌱' }));
   head.appendChild(el('h1', { text: name }));
   head.appendChild(el('p', { class: 'bio', text: s.bio || 'ゲーム・note の記事・TikTok の動画をまとめています' }));
   if ((s.links || []).length) head.appendChild(el('div', { class: 'chips' }, s.links.map(l => el('a', { class: 'chip', href: l.url, target: '_blank', rel: 'noopener', text: l.label }))));
@@ -287,14 +301,14 @@ function setTab(k) {
 
 const DAY = 86400000;
 function card(it) {
-  const img = safeUrl(it.image);
+  const img = safeImg(it.image);
   const isNew = it.added && Date.now() - it.added < 14 * DAY;
   const thumb = el('div', { class: 'thumb' }, [
     img ? el('img', { src: img, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer', onerror: e => { e.target.replaceWith(el('div', { class: 'ph', text: KINDS[it.kind].ph })); } })
         : el('div', { class: 'ph', text: (KINDS[it.kind] || KINDS.other).ph }),
     it.kind === 'video' ? el('div', { class: 'play' }) : null
   ]);
-  if (it.kind === 'video' && it.vid && /tiktok\.com/i.test(it.url)) { thumb.dataset.vid = it.vid; LIVE.observe(thumb); }
+  if (it.kind === 'video' && tiktokId(it)) { thumb.dataset.vid = tiktokId(it); LIVE.observe(thumb); }
   const date = it.kind === 'note' && it.added ? new Date(it.added).toLocaleDateString('ja-JP') : '';
   const c = el('a', { class: 'card', href: it.url, target: '_blank', rel: it.pr ? 'noopener sponsored' : 'noopener' }, [
     it.pr ? el('span', { class: 'badge', text: 'PR' }) : null,
@@ -306,13 +320,13 @@ function card(it) {
       el('div', { class: 'meta', text: [date, host(it.url)].filter(Boolean).join(' ・ ') })
     ])
   ]);
-  if (it.kind === 'video' && it.vid) c.addEventListener('click', e => { e.preventDefault(); openVideo(it); });
+  if (it.kind === 'video' && tiktokId(it)) c.addEventListener('click', e => { e.preventDefault(); openVideo(it); });
   if (CODE && !it.auto) c.appendChild(adminTools(it));
   return c;
 }
 
 function supportBtn(it) {
-  const img = safeUrl(it.image);
+  const img = safeImg(it.image);
   const b = el('a', { class: 'sbtn', href: it.url, target: '_blank', rel: 'noopener' }, [
     img ? el('img', { src: img, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer' }) : null,
     el('div', {}, [el('b', { text: it.title }), it.desc ? el('span', { text: it.desc }) : null])
@@ -352,7 +366,7 @@ function startLive(t) {
   liveThumb = t;
   const f = el('iframe', { class: 'live', title: '動画', tabindex: '-1', allow: 'autoplay; encrypted-media',
     src: 'https://www.tiktok.com/player/v1/' + encodeURIComponent(t.dataset.vid) +
-      '?autoplay=1&loop=1&controls=0&progress_bar=0&play_button=0&volume_control=0&fullscreen_button=0&timestamp=0&music_info=0&description=0&rel=0&native_context_menu=0&closed_caption=0' });
+      '?autoplay=1&muted=1&loop=1&controls=0&progress_bar=0&play_button=0&volume_control=0&fullscreen_button=0&timestamp=0&music_info=0&description=0&rel=0&native_context_menu=0&closed_caption=0' });
   f.addEventListener('load', () => {
     // 音を消して再生（TikTok の再生画面へのお願い。聞いてもらえないときは何もおきない）
     for (const type of ['mute', 'play']) { try { f.contentWindow.postMessage({ type, 'x-tiktok-player': true }, '*'); } catch (e) {} }
@@ -370,11 +384,24 @@ function stopLive() {
 addEventListener('scroll', pickLive, { passive: true });
 document.addEventListener('visibilitychange', pickLive);
 
-// TikTok の動画はページの中で再生する（押したとき：音ありで大きく）
+// TikTok の動画はページの中で再生する（押したとき：大きく開く）。
+// 音つきの自動再生はブラウザが止めるので、音なしで始める（右下のボタンで音を出せる）
+function tiktokId(it) {
+  if (!/tiktok\.com/i.test(it.url || '')) return '';
+  if (/^\d+$/.test(String(it.vid || ''))) return String(it.vid);
+  const m = String(it.url).match(/\/video\/(\d+)/);
+  return m ? m[1] : '';
+}
 function openVideo(it) {
+  const id = tiktokId(it);
   stopLive();
   $('player').innerHTML = '';
-  $('player').appendChild(el('iframe', { src: 'https://www.tiktok.com/player/v1/' + encodeURIComponent(it.vid) + '?autoplay=1&rel=0', allow: 'autoplay; fullscreen; encrypted-media', allowfullscreen: '' }));
+  $('player').appendChild(el('iframe', {
+    src: 'https://www.tiktok.com/player/v1/' + encodeURIComponent(id) + '?autoplay=1&muted=1&loop=1&rel=0&description=1&music_info=1',
+    allow: 'autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write; web-share',
+    allowfullscreen: '', referrerpolicy: 'strict-origin-when-cross-origin'
+  }));
+  $('player').appendChild(el('a', { class: 'tt-open', href: it.url, target: '_blank', rel: 'noopener', text: 'TikTok で見る ›' }));
   $('vmodal').hidden = false;
 }
 function closeVideo() { $('vmodal').hidden = true; $('player').innerHTML = ''; pickLive(); }
@@ -394,8 +421,91 @@ function setupAds() {
 }
 
 // ---------------------------------------------------------------- 管理者
-function openModal(build) { const box = $('box'); box.innerHTML = ''; build(box); $('modal').hidden = false; }
-function closeModal() { $('modal').hidden = true; }
+function openModal(build) { PASTE = null; const box = $('box'); box.innerHTML = ''; build(box); $('modal').hidden = false; }
+function closeModal() { $('modal').hidden = true; PASTE = null; }
+
+// ---------------------------------------------------------------- 画像をえらぶ（写真・貼りつけ）
+// 画像は URL ではなく、ブラウザで小さくしてから保存する（スプレッドシートの1マスに入る大きさ）
+let PASTE = null; // 開いている画面の「貼りつけたときにすること」
+document.addEventListener('paste', e => {
+  if (!PASTE || $('modal').hidden) return;
+  const file = [...((e.clipboardData && e.clipboardData.items) || [])].find(i => i.kind === 'file' && /^image\//.test(i.type));
+  if (!file) return; // 文字の貼りつけはそのまま
+  e.preventDefault();
+  PASTE(file.getAsFile());
+});
+
+function loadImage(src) {
+  return new Promise((ok, ng) => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ng(new Error('画像を開けませんでした')); im.src = src; });
+}
+// 画像を小さくして JPEG の data URL に。square：まん中を正方形に切りぬく（アイコン）
+async function shrinkImage(src, { max = 640, square = false, limit = 45000 } = {}) {
+  const im = await loadImage(src);
+  let sw = im.naturalWidth, sh = im.naturalHeight, sx = 0, sy = 0;
+  if (!sw || !sh) throw new Error('画像を開けませんでした');
+  if (square) { const s = Math.min(sw, sh); sx = (sw - s) / 2; sy = (sh - s) / 2; sw = sh = s; }
+  let scale = Math.min(1, max / Math.max(sw, sh));
+  const cv = document.createElement('canvas'), g = cv.getContext('2d');
+  for (let tries = 0; tries < 8; tries++) {
+    cv.width = Math.max(1, Math.round(sw * scale)); cv.height = Math.max(1, Math.round(sh * scale));
+    g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); // すきとおったところは白に
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(im, sx, sy, sw, sh, 0, 0, cv.width, cv.height);
+    for (const q of [0.85, 0.75, 0.65, 0.55, 0.45]) {
+      const url = cv.toDataURL('image/jpeg', q);
+      if (url.length <= limit) return url;
+    }
+    scale *= 0.8;
+  }
+  throw new Error('画像を小さくできませんでした');
+}
+const readFile = f => new Promise((ok, ng) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = () => ng(new Error('ファイルを読めませんでした')); r.readAsDataURL(f); });
+
+// 「📷 写真から選ぶ」・貼りつけ・見本・「消す」。shape：'wide'（ふつうのカード）・'r34'（動画）・'r11'・'round'（アイコン）
+function imagePicker(initial, opt) {
+  opt = opt || {};
+  let value = safeImg(initial) || '';
+  let shape = opt.shape || 'wide';
+  const pv = el('div', { class: 'pv' });
+  const err = el('div', { class: 'err' });
+  const file = el('input', { type: 'file', accept: 'image/*' });
+  const clear = el('button', { text: '🗑️ 画像を消す', onclick: () => { value = ''; show(); } });
+  const show = () => {
+    pv.className = 'pv' + (value ? ' has' : '') + (shape === 'r34' ? ' r34' : shape === 'r11' || shape === 'round' ? ' r11' : '') + (shape === 'round' ? ' round' : '');
+    pv.innerHTML = '';
+    if (value) pv.appendChild(el('img', { src: value, alt: '', referrerpolicy: 'no-referrer' }));
+    else pv.appendChild(el('span', { text: '画像なし' }));
+    clear.hidden = !value;
+  };
+  const take = async (src) => {
+    err.textContent = ''; pv.innerHTML = ''; pv.appendChild(el('span', { text: '小さくしています…' }));
+    try { value = await shrinkImage(src, opt.square ? { max: 160, square: true, limit: 30000 } : { max: 640, limit: 45000 }); }
+    catch (e) { err.textContent = e.message; }
+    show();
+  };
+  const fromFile = async f => { if (!f) return; if (!/^image\//.test(f.type || 'image/')) { err.textContent = '画像のファイルを選んでください'; return; } take(await readFile(f)); };
+  file.addEventListener('change', () => { fromFile(file.files[0]); file.value = ''; });
+  PASTE = fromFile;
+  show();
+  const root = el('div', { class: 'pick' }, [
+    pv,
+    el('div', { class: 'row' }, [el('button', { class: 'go', text: '📷 写真から選ぶ', onclick: () => file.click() }), clear]),
+    el('p', { class: 'hint', text: 'スマホは写真アプリから、パソコンはファイルから選べます。画像をコピーして Ctrl+V で貼りつけることもできます。' }),
+    file, err
+  ]);
+  return {
+    el: root,
+    get: () => value,
+    setShape: s => { shape = s; show(); },
+    // 「読みこむ」で見つけた画像の住所 → サーバーで画像を取ってきて、写真と同じように小さくする
+    async fromUrl(u) {
+      if (!safeUrl(u)) return;
+      try { await take(await call('portalFetchImage', CODE, u)); if (!value) value = u; }
+      catch (e) { value = u; err.textContent = ''; }
+      show();
+    }
+  };
+}
 $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
 
 function openLogin() {
@@ -467,16 +577,15 @@ function openEditor(it) {
       kind: el('select', {}, ORDER.map(k => el('option', { value: k, text: KINDS[k].tab }))),
       title: el('input', { type: 'text', value: it ? it.title : '' }),
       desc: el('textarea', {}, it ? [it.desc] : []),
-      image: el('input', { type: 'url', placeholder: 'https://…（なくてもよい）', value: it ? it.image : '' }),
       pr: el('input', { type: 'checkbox' })
     };
     let vid = it ? it.vid : '';
     f.kind.value = it ? it.kind : 'game';
     f.pr.checked = it ? !!it.pr : false;
-    const pv = el('div', { class: 'pv' });
-    const showPv = () => { pv.innerHTML = ''; if (safeUrl(f.image.value)) pv.appendChild(el('img', { src: f.image.value, alt: '', referrerpolicy: 'no-referrer' })); };
-    f.image.addEventListener('input', showPv); showPv();
-    f.kind.addEventListener('change', () => { if (f.kind.value === 'pr') f.pr.checked = true; });
+    const pick = imagePicker(it ? it.image : '');
+    const shapeOf = k => k === 'video' ? 'r34' : k === 'support' ? 'r11' : 'wide';
+    pick.setShape(shapeOf(f.kind.value));
+    f.kind.addEventListener('change', () => { if (f.kind.value === 'pr') f.pr.checked = true; pick.setShape(shapeOf(f.kind.value)); });
     const err = el('div', { class: 'err' });
     const detail = el('div', { hidden: it ? null : '' });
 
@@ -487,8 +596,8 @@ function openEditor(it) {
         f.url.value = p.url; f.kind.value = p.kind; f.pr.checked = !!p.pr; vid = p.vid || '';
         if (p.title) f.title.value = p.title;
         if (p.desc) f.desc.value = p.desc;
-        if (p.image) f.image.value = p.image;
-        showPv();
+        pick.setShape(shapeOf(f.kind.value));
+        if (p.image && !pick.get()) await pick.fromUrl(p.image);
         if (p.note || !p.title) err.textContent = p.note || '題名が読めなかったので、手で入れてください';
       } catch (e) { err.textContent = e.message; }
       detail.hidden = false; read.disabled = false; read.textContent = '🔍 もう一度読みこむ';
@@ -496,7 +605,7 @@ function openEditor(it) {
 
     const save = el('button', { class: 'go', text: it ? '直す' : '登録する', onclick: async () => {
       save.disabled = true; err.textContent = '';
-      const item = { url: f.url.value, kind: f.kind.value, title: f.title.value, desc: f.desc.value, image: f.image.value, pr: f.pr.checked, vid };
+      const item = { url: f.url.value, kind: f.kind.value, title: f.title.value, desc: f.desc.value, image: pick.get(), pr: f.pr.checked, vid };
       try {
         if (it) await call('portalUpdate', CODE, it.id, item); else await call('portalAdd', CODE, item);
         closeModal(); await load(true); toast(it ? '直しました' : '登録しました');
@@ -507,7 +616,7 @@ function openEditor(it) {
       el('label', { text: '種類' }), f.kind,
       el('label', { text: '題名' }), f.title,
       el('label', { text: '説明' }), f.desc,
-      el('label', { text: '画像のURL' }), f.image, pv,
+      el('label', { text: '画像' }), pick.el,
       el('label', { class: 'check' }, [f.pr, '「PR」をつける（広告・アフィリエイトのリンク）']),
       el('p', { class: 'hint', text: 'アフィリエイトのリンクは「PR」をつける決まりがあります（おすすめ はいつも PR がつきます）。' })
     );
@@ -529,11 +638,11 @@ function openSettings() {
     const f = {
       name: el('input', { type: 'text', value: s.name || '', placeholder: 'ハムチーズの作品集' }),
       bio: el('textarea', {}, [s.bio || '']),
-      icon: el('input', { type: 'url', value: s.icon || '', placeholder: 'https://…' }),
       noteUser: el('input', { type: 'text', value: s.noteUser || '', placeholder: '例：hamcheese' }),
       links: el('textarea', { placeholder: 'X https://x.com/…\nTikTok https://www.tiktok.com/@…' }, [(s.links || []).map(l => l.label + ' ' + l.url).join('\n')]),
       adsense: el('input', { type: 'text', value: s.adsense || '', placeholder: 'ca-pub-0000000000000000' })
     };
+    const icon = imagePicker(s.icon || '', { shape: 'round', square: true });
     const err = el('div', { class: 'err' });
     const save = el('button', { class: 'go', text: '保存', onclick: async () => {
       save.disabled = true; err.textContent = '';
@@ -541,7 +650,7 @@ function openSettings() {
         const m = l.match(/^(.*?)\s+(https?:\/\/\S+)$/); return m ? { label: m[1], url: m[2] } : null;
       }).filter(Boolean);
       try {
-        await call('portalSaveSettings', CODE, { name: f.name.value, bio: f.bio.value, icon: f.icon.value, noteUser: f.noteUser.value, links, adsense: f.adsense.value });
+        await call('portalSaveSettings', CODE, { name: f.name.value, bio: f.bio.value, icon: icon.get(), noteUser: f.noteUser.value, links, adsense: f.adsense.value });
         closeModal(); await load(true); toast('保存しました');
       } catch (e) { err.textContent = e.message; save.disabled = false; }
     } });
@@ -549,7 +658,7 @@ function openSettings() {
       el('h3', { text: '⚙️ ページの設定' }),
       el('label', { text: 'ページの名前' }), f.name,
       el('label', { text: 'ひとこと' }), f.bio,
-      el('label', { text: 'アイコンの画像のURL' }), f.icon,
+      el('label', { text: 'アイコン' }), icon.el,
       el('label', { text: 'note のユーザー名' }), f.noteUser,
       el('p', { class: 'hint', text: 'note.com/○○ の ○○。入れると、新しい記事が自動で並びます（3時間ごとに読みなおし）。' }),
       el('label', { text: '上に出すリンク（1行に「名前 URL」）' }), f.links,
