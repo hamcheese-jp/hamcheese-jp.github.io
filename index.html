@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="google-adsense-account" content="ca-pub-7660505651126592">
+<script src="/ads-banner.js"></script>
 <title>ハムチーズのゲームセンター</title>
 <meta name="description" content="ハムチーズの作ったゲームと、みんなが作ったゲームで遊べるゲームセンター。あなたのゲームも申請して載せられます。">
 <meta property="og:title" content="ハムチーズのゲームセンター">
@@ -245,8 +246,8 @@ h1.logo-h { margin: 0; line-height: 0; }
 .cta-box p { margin: 0; font-size: 13px; color: var(--sub); }
 .cta-box .cta { margin-top: 10px; }
 .note-line { font-size: 12px; color: var(--sub); margin: 8px 2px 0; }
-.adbox { margin: 22px 0 6px; padding: 8px; border-radius: 14px; background: var(--card); box-shadow: var(--shadow); min-height: 60px; overflow: hidden; }
-.adlabel { font-size: 11px; color: var(--sub); margin: 0 2px 4px; }
+.adbox { margin: 22px 0 6px; padding: 8px; border-radius: 14px; background: var(--card); box-shadow: var(--shadow); overflow: hidden; color: var(--sub); }
+.adbox .hc-banner-on { margin: 0 auto; }
 
 /* みんなのゲーム：作者 */
 .author { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; font-size: 12px; font-weight: bold; color: var(--accent2); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -739,17 +740,11 @@ $('vclose').onclick = closeVideo;
 $('vmodal').onclick = e => { if (e.target === $('vmodal')) closeVideo(); };
 
 // ---------------------------------------------------------------- 広告（AdSense の ID を設定したときだけ）
-// バナー広告：AdSense の審査に通ったあと「広告 → 広告ユニットごと → ディスプレイ広告」で作った
-// 広告ユニットの番号（data-ad-slot の数字）をここに入れると、ページの2か所にバナーが出る。
-// 空のあいだ・設定に AdSense の ID がないあいだ・管理者のときは、何も出さない（空の枠も出さない）。
-const AD_BANNER_SLOT = '';
+// バナー広告：共通の /ads-banner.js が出す（全部のゲームと共通。広告ユニットの番号はそのファイルの SLOT に入れる）。
+// 番号が空のあいだ・管理者のときは、何も出さない（空の枠も出さない）。
 function addBanner(parent) {
-  const id = (DATA.settings || {}).adsense;
-  if (!AD_BANNER_SLOT || !/^\d+$/.test(AD_BANNER_SLOT) || !id || !/^ca-pub-\d+$/.test(id) || CODE) return;
-  const ins = el('ins', { class: 'adsbygoogle', style: 'display:block', 'data-ad-client': id, 'data-ad-slot': AD_BANNER_SLOT,
-    'data-ad-format': 'auto', 'data-full-width-responsive': 'true' });
-  parent.appendChild(el('div', { class: 'adbox' }, [el('div', { class: 'adlabel', text: '広告' }), ins]));
-  try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+  if (CODE || !(window.hcBanner && window.hcBanner.ready)) return;
+  parent.appendChild(el('div', { class: 'adbox' }, [el('div', { class: 'hc-banner' })]));
 }
 let adsDone = false;
 function setupAds() {
