@@ -536,6 +536,7 @@ function render() {
   foot.appendChild(el('p', { class: 'privacy', text: 'よりよいページづくりのため、このページが見られた回数や押されたリンクを数えています（名前など、個人がわかる情報は集めていません）。' }));
   foot.appendChild(el('p', { class: 'privacy', text: 'ゲームの申請でいただいた連絡先などの個人情報は、このページには出しません（管理者だけが見ます）。ページに出るのは、ゲームの名前・説明・画像・作者名・作者のSNSだけです。' }));
   foot.appendChild(el('p', {}, [el('button', { class: 'linkish', text: '📜 ゲームを載せるときの決まり', onclick: () => openRules() })]));
+  foot.appendChild(el('p', {}, [el('a', { href: 'privacy.html', text: '🔒 プライバシーポリシー' }), document.createTextNode('　｜　'), el('a', { href: 'https://github.com/hamcheese-jp/hamcheese-jp.github.io/issues', target: '_blank', rel: 'noopener', text: '✉️ お問い合わせ' })]));
   foot.appendChild(el('p', { text: '© ' + new Date().getFullYear() + ' ' + name }));
   if (!CODE) foot.appendChild(el('button', { class: 'admin-link', title: '管理者', text: '🛠️', onclick: openLogin }));
 
