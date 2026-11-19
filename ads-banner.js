@@ -26,6 +26,8 @@
 
   var style = document.createElement('style');
   style.textContent =
+    // 中身が入る前の空の枠でも幅を持たせる（中央ぞろえの画面だと、空の枠は幅0になって「見えていない」扱いになるため）
+    '.hc-banner{display:block;width:100%;max-width:728px;margin-left:auto;margin-right:auto;min-height:1px;box-sizing:border-box}' +
     '.hc-banner-on{display:block;width:100%;max-width:728px;margin:14px auto;text-align:center;overflow:hidden;box-sizing:border-box}' +
     '.hc-banner-on .hc-banner-label{font-size:11px;opacity:.6;margin:0 0 4px;text-align:left}' +
     '.hc-promo{display:flex;align-items:center;gap:12px;padding:8px;border-radius:14px;text-decoration:none;text-align:left;' +
