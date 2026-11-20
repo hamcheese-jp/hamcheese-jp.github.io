@@ -13,7 +13,7 @@
  */
 (function () {
   var CLIENT = 'ca-pub-7660505651126592';
-  var SLOT = ''; // ← 審査に通ったら「広告 → 広告ユニットごと → ディスプレイ広告」で作った番号（数字だけ）を入れる
+  var SLOT = '3264432823'; // ← 審査に通ったら「広告 → 広告ユニットごと → ディスプレイ広告」で作った番号（数字だけ）を入れる
 
   var CENTER = 'https://hamcheese-jp.github.io/';
   var off = /[?&]noads\b/.test(location.search);
