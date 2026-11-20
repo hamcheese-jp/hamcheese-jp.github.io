@@ -30,6 +30,8 @@
     '.hc-banner{display:block;width:100%;max-width:728px;margin-left:auto;margin-right:auto;min-height:1px;box-sizing:border-box}' +
     '.hc-banner-on{display:block;width:100%;max-width:728px;margin:14px auto;text-align:center;overflow:hidden;box-sizing:border-box}' +
     '.hc-banner-on .hc-banner-label{font-size:11px;opacity:.6;margin:0 0 4px;text-align:left}' +
+    // 広告が来なかったときは、空のすき間と「広告」の文字を出さない
+    '.hc-banner-on:has(ins[data-ad-status="unfilled"]){display:none!important}' +
     '.hc-promo{display:flex;align-items:center;gap:12px;padding:8px;border-radius:14px;text-decoration:none;text-align:left;' +
     'background:linear-gradient(90deg,#fff3e2,#ffe6f1);color:#3b2f2a;box-shadow:0 3px 10px rgba(150,100,60,.18);font-family:inherit}' +
     '.hc-promo img{width:128px;height:67px;object-fit:cover;border-radius:9px;flex:0 0 auto;display:block}' +
